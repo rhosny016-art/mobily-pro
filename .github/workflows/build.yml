@@ -1,0 +1,41 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch: # يتيح لك تشغيل البناء يدوياً بأزرار المتصفح
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. جلب المستودع
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      # 2. فك ضغط ملف التطبيق
+      - name: Unzip Project Files
+        run: |
+          unzip mobily-pro.zip -d project_files
+          echo "==== تم فك الضغط بنجاح ===="
+          ls -la project_files
+
+      # 3. إعداد الجافا المتوافقة 
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      # 4. بناء الـ APK باستخدام Gradle السحابي
+      - name: Build Debug APK
+        run: |
+          cd project_files
+          chmod +x gradlew || true
+          ./gradlew assembleDebug --stacktrace || gradle assembleDebug --stacktrace
+
+      # 5. استخراج ملف الـ APK النهائي للتحميل
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: GoldenPhone-App
+          path: project_files/app/build/outputs/apk/debug/app-debug.apk
