@@ -18,7 +18,7 @@ jobs:
           unzip mobily-pro.zip -d project_files
           echo "==== تم فك الضغط بنجاح ===="
 
-      # 3. إعداد الجافا مع تفعيل الكاش لتسريع الأداء
+      # 3. إعداد الجافا وتفعيل الكاش لتفادي تحميل الحزم من الصفر
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -26,13 +26,13 @@ jobs:
           java-version: '17'
           cache: 'gradle'
 
-      # 4. بناء الـ APK مع تمرير بارامتر فك تعارض الذاكرة و KSP
+      # 4. بناء الـ APK وتخطي قيود تعارض أداة KSP مع الذاكرة السحابية
       - name: Build Debug APK
         run: |
           cd project_files
           chmod +x gradlew || true
           
-          # تشغيل البناء مع إعطاء خيارات لتفادي مشاكل الذاكرة والـ KSP Daemon
+          # إجبار الكومبيلر على استخدام إعدادات ذاكرة منخفضة تناسب بيئة KSP
           ./gradlew assembleDebug --stacktrace \
             -Dorg.gradle.jvmargs="-Xmx2048m -XX:MaxMetaspaceSize=512m -Dkotlin.daemon.jvmoptions=-Xmx1024m" \
             -Dkotlin.compiler.execution.strategy="in-process" || \
@@ -44,4 +44,3 @@ jobs:
         with:
           name: GoldenPhone-App
           path: project_files/app/build/outputs/apk/debug/app-debug.apk
-          
