@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Quote } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import SectionHeading from "@/components/SectionHeading";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import LazyImage from "@/components/LazyImage";
@@ -8,7 +8,12 @@ import { TESTIMONIALS } from "@/lib/siteData";
 
 export function TestimonialsSection() {
   return (
-    <section id="reviews" className="relative scroll-mt-24 py-14 md:py-28 bg-slate-50/50 overflow-hidden">
+    <section
+      id="reviews"
+      aria-label="آراء العملاء"
+      className="relative scroll-mt-24 py-14 md:py-28 bg-slate-50/50 overflow-hidden content-paint"
+      style={{ contentVisibility: "auto", containIntrinsicSize: "0px 500px" }}
+    >
       {/* خلفية جمالية */}
       <div className="absolute top-0 right-1/4 w-[350px] h-[350px] rounded-full bg-blue-500/5 blur-[100px] pointer-events-none" />
       <div className="absolute bottom-0 left-1/4 w-[350px] h-[350px] rounded-full bg-emerald-500/5 blur-[100px] pointer-events-none" />
@@ -19,7 +24,7 @@ export function TestimonialsSection() {
           title="قصص نجاح حقيقية لشركائنا"
           subtitle="لا توجد شهادة أفضل من نجاح عملائنا؛ إليك بعض التجارب الواقعية ممن وضعوا ثقتهم في دلّني."
         />
-        
+
         <div className="grid md:grid-cols-3 gap-8">
           {TESTIMONIALS.map((t, i) => (
             <motion.div
@@ -32,30 +37,30 @@ export function TestimonialsSection() {
               className="relative bg-white rounded-[24px] border border-gray-100 p-6 sm:p-8 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
               dir="rtl"
             >
-              {/* أيقونة اقتباس أنيقة ومطورة */}
-              <div className="absolute top-6 left-6 text-blue-500/10 pointer-events-none">
-                <Quote className="w-12 h-12" aria-hidden="true" />
+              {/* أيقونة اقتباس أنيقة — SVG واحدة فقط لكل بطاقة */}
+              <div className="absolute top-6 left-6 text-blue-500/10 pointer-events-none" aria-hidden="true">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                </svg>
               </div>
 
               <div>
-                {/* نجوم التقييم الخمسة للتأكيد على الجودة */}
-                <div className="flex gap-1 mb-5">
-                  {[...Array(5)].map((_, idx) => (
-                    <span key={idx} className="text-amber-400">★</span>
-                  ))}
+                {/* نجوم التقييم — CSS بدل 5 عناصر span منفصلة */}
+                <div className="flex gap-1 mb-5" aria-label="تقييم 5 نجوم">
+                  <span className="text-amber-400 text-base leading-none">★★★★★</span>
                 </div>
-                
+
                 <p className="text-gray-600 leading-relaxed font-medium text-sm">
                   "{t.message}"
                 </p>
               </div>
 
               <div className="flex items-center gap-4 mt-8 pt-6 border-t border-gray-50">
-                <LazyImage 
-                  src={t.avatar} 
-                  alt={t.name} 
+                <LazyImage
+                  src={t.avatar}
+                  alt={t.name}
                   wrapperClassName="w-12 h-12 rounded-full overflow-hidden border-2 border-white ring-4 ring-blue-50/50 shrink-0 bg-slate-100"
-                  className="w-full h-full object-cover" 
+                  className="w-full h-full object-cover"
                 />
                 <div>
                   <p className="font-extrabold text-sm text-gray-900 flex items-center gap-1.5">
