@@ -1,15 +1,75 @@
+import { useEffect, useRef, useState } from "react";
 import { Globe2, MapPinned, Sparkles, Star } from "lucide-react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 
-const stats = [
-  { value: "+250", label: "شريك نجاح" },
-  { value: "4.9", label: "متوسط تقييم عملائنا" },
-  { value: "+200", label: "مراجعة موثقة" },
-  { value: "8", label: "أسواق نعمل بها" },
+type Stat = {
+  value: number;
+  prefix?: string;
+  suffix?: string;
+  decimals?: number;
+  label: string;
+};
+
+const stats: Stat[] = [
+  { value: 250, prefix: "+", label: "شريك نجاح" },
+  { value: 4.9, decimals: 1, label: "متوسط تقييم عملائنا" },
+  { value: 200, prefix: "+", label: "مراجعة موثقة" },
+  { value: 8, label: "أسواق نعمل بها" },
 ];
 
-export function Network() {
+function useCountUp(target: number, active: boolean, duration = 1.5) {
+  const [value, setValue] = useState(0);
+  useEffect(() => {
+    if (!active) return;
+    let raf = 0;
+    const start = performance.now();
+    const step = (now: number) => {
+      const progress = Math.min(1, (now - start) / (duration * 1000));
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setValue(target * eased);
+      if (progress < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [active, target, duration]);
+  return value;
+}
+
+function StatCard({ stat, index, started }: { stat: Stat; index: number; started: boolean }) {
   const reduceMotion = useReducedMotion();
+  const animated = useCountUp(stat.value, started && !reduceMotion, 1.3 + index * 0.12);
+  const shown = reduceMotion ? stat.value : animated;
+  const display = stat.decimals ? shown.toFixed(stat.decimals) : Math.round(shown).toString();
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: reduceMotion ? 0 : 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.45, delay: index * 0.08 }}
+      className="rounded-2xl border border-white/15 bg-white/[0.09] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,.12)] backdrop-blur-md"
+    >
+      <p dir="ltr" className="text-right font-mono text-3xl font-bold text-[#f3c46a] sm:text-4xl">
+        {stat.prefix}
+        {display}
+        {stat.suffix}
+      </p>
+      <p className="mt-2 text-sm font-bold text-[#dceaf1]">{stat.label}</p>
+      {stat.label.includes("تقييم") ? (
+        <span className="mt-2 flex gap-0.5">
+          {Array.from({ length: 5 }).map((_, starIndex) => (
+            <Star key={starIndex} className="h-3 w-3 fill-[#f3c46a] text-[#f3c46a]" />
+          ))}
+        </span>
+      ) : null}
+    </motion.div>
+  );
+}
+
+export function Network() {
+  const statsRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(statsRef, { once: true, margin: "-80px" });
+
   return (
     <section id="network" className="relative overflow-hidden bg-[#103652] py-20 text-white sm:py-24" aria-labelledby="network-title">
       <div
@@ -44,26 +104,9 @@ export function Network() {
               </span>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3 sm:gap-4">
-            {stats.map(({ value, label }, index) => (
-              <motion.div
-                key={label}
-                initial={{ opacity: 0, y: reduceMotion ? 0 : 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.45, delay: index * 0.08 }}
-                className="rounded-2xl border border-white/15 bg-white/[0.09] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,.12)] backdrop-blur-md"
-              >
-                <p className="font-mono text-3xl font-bold text-[#f3c46a] sm:text-4xl">{value}</p>
-                <p className="mt-2 text-sm font-bold text-[#dceaf1]">{label}</p>
-                {label.includes("تقييم") ? (
-                  <span className="mt-2 flex gap-0.5">
-                    {Array.from({ length: 5 }).map((_, index) => (
-                      <Star key={index} className="h-3 w-3 fill-[#f3c46a] text-[#f3c46a]" />
-                    ))}
-                  </span>
-                ) : null}
-              </motion.div>
+          <div ref={statsRef} className="grid grid-cols-2 gap-3 sm:gap-4">
+            {stats.map((stat, index) => (
+              <StatCard key={stat.label} stat={stat} index={index} started={inView} />
             ))}
           </div>
         </div>

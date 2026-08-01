@@ -46,7 +46,12 @@ export function Services() {
               </div>
               <h3 className="relative mt-6 text-lg font-black text-[#153855]">{title}</h3>
               <p className="relative mt-3 text-sm font-medium leading-7 text-[#627b8d]">{text}</p>
-              <span className="relative mt-5 inline-block text-sm font-black text-[#b5771d]">اكتشف الخدمة ←</span>
+              <a
+                href="#contact"
+                className="relative mt-5 inline-block rounded-lg text-sm font-black text-[#b5771d] transition hover:text-[#8f5c12] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c8912e] focus-visible:ring-offset-4"
+              >
+                اطلب الخدمة ←
+              </a>
             </motion.article>
           ))}
         </div>

@@ -11,6 +11,24 @@
   html {
     scroll-behavior: smooth;
   }
+  /* Offset anchored sections so the fixed navbar never covers headings */
+  section[id] {
+    scroll-margin-top: 96px;
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #eef3f6;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #b7cbd8;
+    border-radius: 999px;
+    border: 2px solid #eef3f6;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #8fabb9;
+  }
   body {
     margin: 0;
     min-width: 320px;
