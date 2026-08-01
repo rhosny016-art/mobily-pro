@@ -80,7 +80,7 @@ export function StatsSection() {
               key={s.label}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-30px" }}
+              viewport={{ once: true, amount: 0.1 }}
               transition={{ delay: i * 0.08, duration: 0.5 }}
               whileHover={{ y: -6 }}
               className="relative group bg-white rounded-xl md:rounded-2xl border border-gray-100 p-4 sm:p-8 text-center shadow-md hover:shadow-xl hover:translate-y-[-4px] transition-all duration-300"
@@ -136,7 +136,7 @@ export function WhyChooseUsSection() {
                 key={item.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-30px" }}
+                viewport={{ once: true, amount: 0.1 }}
                 transition={{ delay: i * 0.08, duration: 0.5 }}
                 whileHover={{ y: -8 }}
                 className="group relative bg-white rounded-[20px] md:rounded-[24px] border border-gray-100 p-5 sm:p-8 shadow-sm hover:shadow-xl hover:border-blue-500/10 transition-all duration-300 flex flex-col justify-between text-right"

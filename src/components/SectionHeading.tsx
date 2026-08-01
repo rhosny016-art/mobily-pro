@@ -26,7 +26,7 @@ export default function SectionHeading({ id, eyebrow, title, subtitle, light = f
           variants={fadeUp}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
+          viewport={{ once: true, amount: 0.1 }}
           custom={0}
           className={`inline-block px-4 py-1.5 rounded-full text-sm font-semibold mb-4 ${
             light ? "glass-card text-white" : "bg-primary/10 text-primary"
@@ -39,7 +39,7 @@ export default function SectionHeading({ id, eyebrow, title, subtitle, light = f
         variants={fadeUp}
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, margin: "-50px" }}
+        viewport={{ once: true, amount: 0.1 }}
         custom={1}
         className={`text-3xl md:text-4xl font-extrabold leading-tight ${light ? "text-white" : "text-foreground"}`}
       >
@@ -50,7 +50,7 @@ export default function SectionHeading({ id, eyebrow, title, subtitle, light = f
           variants={fadeUp}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
+          viewport={{ once: true, amount: 0.1 }}
           custom={2}
           className={`mt-4 text-lg leading-relaxed ${light ? "text-white/70" : "text-muted-foreground"}`}
         >

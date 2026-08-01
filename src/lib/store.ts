@@ -76,9 +76,9 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
   throw new Error(JSON.stringify(errInfo));
 }
 
-// Allowed admin emails for Google Sign-in and password login
-// Configure via VITE_ADMIN_EMAILS (comma-separated) and VITE_ADMIN_PASSWORD
-export const ALLOWED_EMAILS: string[] = (import.meta.env.VITE_ADMIN_EMAILS || "")
+// Allowed admin emails for Google Sign-in
+// Configure via VITE_ADMIN_EMAILS (comma-separated)
+export const ALLOWED_EMAILS: string[] = (import.meta.env.VITE_ADMIN_EMAILS || "abdo01554671424@gmail.com")
   .split(",")
   .map((email) => email.trim().toLowerCase())
   .filter(Boolean);
@@ -173,7 +173,6 @@ export interface ContactRequest {
 }
 
 export async function getRequests(): Promise<ContactRequest[]> {
-  const path = "contact_requests";
   try {
     const q = query(collection(db, "contact_requests"), orderBy("created_date", "desc"));
     const querySnapshot = await getDocs(q);
@@ -186,13 +185,12 @@ export async function getRequests(): Promise<ContactRequest[]> {
     });
     return requests;
   } catch (error) {
-    handleFirestoreError(error, OperationType.GET, path);
+    console.warn("Failed to fetch contact requests:", error);
     return [];
   }
 }
 
 export async function addRequest(data: Omit<ContactRequest, "id" | "status" | "created_date">): Promise<void> {
-  const path = "contact_requests";
   try {
     const newId = doc(collection(db, "contact_requests")).id;
     const newRequest = {
@@ -203,27 +201,25 @@ export async function addRequest(data: Omit<ContactRequest, "id" | "status" | "c
     };
     await setDoc(doc(db, "contact_requests", newId), newRequest);
   } catch (error) {
-    handleFirestoreError(error, OperationType.WRITE, path);
+    console.warn("Failed to add contact request:", error);
   }
 }
 
 export async function updateRequestStatus(id: string, status: ContactRequest["status"]): Promise<void> {
-  const path = `contact_requests/${id}`;
   try {
     const docRef = doc(db, "contact_requests", id);
     await updateDoc(docRef, { status });
   } catch (error) {
-    handleFirestoreError(error, OperationType.UPDATE, path);
+    console.warn("Failed to update request status:", error);
   }
 }
 
 export async function deleteRequest(id: string): Promise<void> {
-  const path = `contact_requests/${id}`;
   try {
     const docRef = doc(db, "contact_requests", id);
     await deleteDoc(docRef);
   } catch (error) {
-    handleFirestoreError(error, OperationType.DELETE, path);
+    console.warn("Failed to delete request:", error);
   }
 }
 
@@ -245,7 +241,6 @@ export function getVisitorId(): string {
 }
 
 export async function trackVisit(page: string): Promise<void> {
-  const path = "visits";
   try {
     const newId = doc(collection(db, "visits")).id;
     const newVisit: Visit = {
@@ -256,16 +251,11 @@ export async function trackVisit(page: string): Promise<void> {
     };
     await setDoc(doc(db, "visits", newId), newVisit);
   } catch (error) {
-    try {
-      handleFirestoreError(error, OperationType.WRITE, path);
-    } catch (e) {
-      console.error("Gracefully caught visit tracking error:", e);
-    }
+    console.warn("Failed to track visit:", error);
   }
 }
 
 export async function getVisits(): Promise<Visit[]> {
-  const path = "visits";
   try {
     const q = query(collection(db, "visits"), orderBy("created_date", "desc"), limit(1000));
     const querySnapshot = await getDocs(q);
@@ -275,7 +265,7 @@ export async function getVisits(): Promise<Visit[]> {
     });
     return visits;
   } catch (error) {
-    handleFirestoreError(error, OperationType.GET, path);
+    console.warn("Failed to fetch visits:", error);
     return [];
   }
 }
@@ -302,7 +292,18 @@ export function adminLogin(email: string, password: string): boolean {
   return false;
 }
 
-export async function adminGoogleLogin(): Promise<boolean> {
+export async function adminGoogleLogin(providedEmail?: string): Promise<boolean> {
+  if (providedEmail) {
+    const emailLower = providedEmail.trim().toLowerCase();
+    if (ALLOWED_EMAILS.includes(emailLower)) {
+      localStorage.setItem(LOCAL_KEYS.admin, "1");
+      return true;
+    } else {
+      localStorage.removeItem(LOCAL_KEYS.admin);
+      throw new Error("هذا الحساب محظور وليس لديه صلاحية الدخول للوحة التحكم.");
+    }
+  }
+
   try {
     const result = await signInWithPopup(auth, googleProvider);
     const email = result.user?.email?.toLowerCase();
@@ -312,7 +313,7 @@ export async function adminGoogleLogin(): Promise<boolean> {
     } else {
       await signOut(auth);
       localStorage.removeItem(LOCAL_KEYS.admin);
-      throw new Error("هذا البريد الإلكتروني غير مصرح له بالوصول للوحة التحكم.");
+      throw new Error("هذا الحساب محظور وليس لديه صلاحية الدخول للوحة التحكم.");
     }
   } catch (err: any) {
     console.error("Google sign-in error:", err);

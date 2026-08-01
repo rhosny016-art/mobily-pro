@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Quote } from "lucide-react";
 import SectionHeading from "@/components/SectionHeading";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import LazyImage from "@/components/LazyImage";
 import { TESTIMONIALS } from "@/lib/siteData";
 
 export function TestimonialsSection() {
@@ -25,8 +26,8 @@ export function TestimonialsSection() {
               key={t.name}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ delay: i * 0.12, duration: 0.6 }}
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ delay: i * 0.1, duration: 0.5 }}
               whileHover={{ y: -8 }}
               className="relative bg-white rounded-[24px] border border-gray-100 p-6 sm:p-8 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
               dir="rtl"
@@ -50,12 +51,11 @@ export function TestimonialsSection() {
               </div>
 
               <div className="flex items-center gap-4 mt-8 pt-6 border-t border-gray-50">
-                <img 
+                <LazyImage 
                   src={t.avatar} 
                   alt={t.name} 
-                  className="w-12 h-12 rounded-full object-cover border-2 border-white ring-4 ring-blue-50/50" 
-                  loading="lazy" 
-                  referrerPolicy="no-referrer" 
+                  wrapperClassName="w-12 h-12 rounded-full overflow-hidden border-2 border-white ring-4 ring-blue-50/50 shrink-0 bg-slate-100"
+                  className="w-full h-full object-cover" 
                 />
                 <div>
                   <p className="font-extrabold text-sm text-gray-900 flex items-center gap-1.5">

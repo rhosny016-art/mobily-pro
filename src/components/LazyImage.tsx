@@ -6,6 +6,7 @@ interface LazyImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   alt: string;
   className?: string;
   wrapperClassName?: string;
+  fallbackSrc?: string;
 }
 
 export default function LazyImage({
@@ -13,15 +14,20 @@ export default function LazyImage({
   alt,
   className = "w-full h-full object-cover",
   wrapperClassName = "relative overflow-hidden w-full h-full rounded-2xl bg-slate-100",
+  fallbackSrc,
+  onError,
   ...props
 }: LazyImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [hasError, setHasError] = useState(false);
   const [isInView, setIsInView] = useState(false);
-  const imgRef = useRef<HTMLImageElement | null>(null);
+  const imgRef = useRef<HTMLDivElement | null>(null);
+
+  const currentSrc = hasError && fallbackSrc ? fallbackSrc : src;
 
   useEffect(() => {
     // If IntersectionObserver is not supported, load immediately
-    if (!window.IntersectionObserver) {
+    if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
       setIsInView(true);
       return;
     }
@@ -34,7 +40,7 @@ export default function LazyImage({
         }
       },
       {
-        rootMargin: "100px", // Load slightly before coming into view
+        rootMargin: "200px", // Preload 200px before coming into viewport for smooth scrolling
       }
     );
 
@@ -51,9 +57,9 @@ export default function LazyImage({
     <div className={wrapperClassName} ref={imgRef}>
       {/* Skeleton Shimmer Placeholder */}
       <AnimatePresence>
-        {!isLoaded && (
+        {!isLoaded && !hasError && (
           <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-slate-100 via-slate-200 to-slate-100"
+            className="absolute inset-0 bg-gradient-to-r from-slate-100 via-slate-200 to-slate-100 z-10"
             animate={{
               backgroundPosition: ["200% 0", "-200% 0"],
             }}
@@ -73,13 +79,19 @@ export default function LazyImage({
       {/* Actual Image */}
       {isInView && (
         <img
-          src={src}
+          src={currentSrc}
           alt={alt}
           onLoad={() => setIsLoaded(true)}
-          className={`${className} transition-opacity duration-700 ${
+          onError={(e) => {
+            setHasError(true);
+            setIsLoaded(true);
+            if (onError) onError(e);
+          }}
+          className={`${className} transition-opacity duration-500 ${
             isLoaded ? "opacity-100" : "opacity-0"
           }`}
           loading="lazy"
+          decoding="async"
           referrerPolicy="no-referrer"
           {...props}
         />
@@ -87,3 +99,4 @@ export default function LazyImage({
     </div>
   );
 }
+

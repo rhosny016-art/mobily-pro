@@ -1,6 +1,5 @@
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, CheckCircle2, Sparkles } from "lucide-react";
+import { CheckCircle2, Sparkles } from "lucide-react";
 import { ICON_MAP } from "@/lib/icons";
 import WhatsAppButton from "./WhatsAppButton";
 import type { Service } from "@/lib/siteData";
@@ -16,11 +15,11 @@ export default function ServiceCard({ service, index = 0 }: { service: Service; 
   return (
     <motion.div
       id={`service-card-${service.id}`}
-      initial={{ opacity: 0, y: 40 }}
+      initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      whileHover={{ y: -10 }}
+      viewport={{ once: true, amount: 0.1 }}
+      transition={{ duration: 0.5, delay: index * 0.08 }}
+      whileHover={{ y: -8 }}
       className="relative group h-full"
     >
       {/* توهّج الحدود الملوّن (Gradient Glow Border) */}
@@ -76,18 +75,8 @@ export default function ServiceCard({ service, index = 0 }: { service: Service; 
           ))}
         </ul>
 
-        <div className="mt-auto flex items-center gap-3 z-10">
-          <WhatsAppButton serviceTitle={service.title} size="sm" className="flex-1" />
-          <Link
-            to={`/services/${service.id}`}
-            className="inline-flex items-center gap-1.5 text-blue-600 font-bold text-sm transition-all duration-300 group/link"
-          >
-            <span className="relative py-0.5">
-              التفاصيل
-              <span className="absolute bottom-0 right-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover/link:w-full" />
-            </span>
-            <ArrowLeft className="w-4 h-4 transition-transform duration-300 group-hover/link:-translate-x-1.5" aria-hidden="true" />
-          </Link>
+        <div className="mt-auto flex items-center gap-3 z-10 w-full">
+          <WhatsAppButton serviceTitle={service.title} size="sm" className="w-full" />
         </div>
       </div>
     </motion.div>

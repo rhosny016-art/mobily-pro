@@ -6,7 +6,6 @@ import LoadingFallback from "@/components/LoadingFallback";
 // Lazy-load client pages
 const Home = lazy(() => import("@/pages/Home"));
 const Services = lazy(() => import("@/pages/Services"));
-const ServiceDetail = lazy(() => import("@/pages/ServiceDetail"));
 const Blog = lazy(() => import("@/pages/Blog"));
 const BlogDetail = lazy(() => import("@/pages/BlogDetail"));
 const About = lazy(() => import("@/pages/About"));
@@ -37,7 +36,6 @@ export default function App() {
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
             <Route path="/services" element={<Services />} />
-            <Route path="/services/:id" element={<ServiceDetail />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogDetail />} />
             <Route path="/about" element={<About />} />

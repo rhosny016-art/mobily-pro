@@ -60,7 +60,7 @@ export default function Blog() {
                 key={post.slug}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
+                viewport={{ once: true, amount: 0.1 }}
                 transition={{ delay: i * 0.08, duration: 0.5 }}
                 className="group bg-white rounded-2xl border border-border overflow-hidden shadow-sm hover:shadow-xl transition-shadow"
               >

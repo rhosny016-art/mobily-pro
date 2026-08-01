@@ -127,6 +127,7 @@ export default function Footer() {
           <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
             <Link to="/about" className="hover:text-white transition-colors">من نحن</Link>
             <Link to="/blog" className="hover:text-white transition-colors">المدونة</Link>
+            <Link to="/dashboard/login" className="hover:text-white transition-colors">لوحة التحكم</Link>
           </div>
         </div>
       </div>

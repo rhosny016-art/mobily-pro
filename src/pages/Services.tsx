@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, CheckCircle2, Sparkles, Star } from "lucide-react";
+import { CheckCircle2, Sparkles, Star } from "lucide-react";
 import ServiceCard from "@/components/ServiceCard";
+import WhatsAppButton from "@/components/WhatsAppButton";
 import { getServices } from "@/lib/store";
 import { SERVICES as DEFAULT_SERVICES } from "@/lib/siteData";
 
@@ -60,9 +60,9 @@ export default function Services() {
           {services.map((s, i) => (
             <motion.div
               key={s.id}
-              initial={{ opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
+              viewport={{ once: true, amount: 0.1 }}
               transition={{ duration: 0.6 }}
               className={`grid lg:grid-cols-2 gap-8 lg:gap-12 items-center ${i % 2 === 1 ? "lg:[direction:ltr]" : ""}`}
             >
@@ -82,13 +82,9 @@ export default function Services() {
                     </li>
                   ))}
                 </ul>
-                <Link
-                  to={`/services/${s.id}`}
-                  className="inline-flex items-center gap-2 text-primary font-bold hover:gap-3 transition-all"
-                >
-                  تعرف على الأسعار والتفاصيل
-                  <ArrowLeft className="w-5 h-5" aria-hidden="true" />
-                </Link>
+                <div className="pt-2">
+                  <WhatsAppButton serviceTitle={s.title} label="طلب الخدمة عبر واتساب" />
+                </div>
               </div>
 
               <div className="lg:[direction:rtl] bg-white rounded-[24px] border border-border p-6 sm:p-8 shadow-sm">

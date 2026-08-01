@@ -55,7 +55,7 @@ export default function About() {
                   key={i}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
+                  viewport={{ once: true, amount: 0.1 }}
                   transition={{ delay: i * 0.1 }}
                   className="text-foreground/75 leading-loose"
                 >
@@ -70,7 +70,7 @@ export default function About() {
                 key={st.label}
                 initial={{ opacity: 0, scale: 0.85 }}
                 whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, amount: 0.1 }}
                 transition={{ delay: i * 0.1 }}
                 className={`rounded-[24px] p-5 sm:p-8 text-center ${i % 2 === 0 ? "gradient-primary text-white" : "bg-muted"}`}
               >
@@ -92,7 +92,7 @@ export default function About() {
                 key={v.title}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, amount: 0.1 }}
                 transition={{ delay: i * 0.12 }}
                 whileHover={{ y: -8 }}
                 className="bg-white rounded-[24px] border border-border p-6 sm:p-8 text-center shadow-sm"
@@ -118,7 +118,7 @@ export default function About() {
                 key={m.name}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, amount: 0.1 }}
                 transition={{ delay: i * 0.1 }}
                 className="text-center group"
               >
