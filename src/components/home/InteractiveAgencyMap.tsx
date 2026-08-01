@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Globe, Sparkles, ArrowLeft, X, CheckCircle2, MapPin, Compass, Radio, Trophy
@@ -186,20 +186,15 @@ export default function InteractiveAgencyMap() {
   const centralHub = DIGITAL_HUBS.find(h => h.isCentral) || DIGITAL_HUBS[0];
   const otherHubs = DIGITAL_HUBS.filter(h => !h.isCentral);
 
-  // Stable per-hub pulse delays — computed once (not per render) so framer-motion
-  // does not re-initialize the infinite animation on every parent re-render.
-  const pulseDelays = useRef<number[]>(
-    otherHubs.map((_, i) => (i * 2) % 4)
-  );
-
   return (
     <section 
       id="network" 
       aria-label="خريطة النجاح للأنشطة التجارية"
-      className="relative py-14 sm:py-20 lg:py-28 bg-[#030712] text-white overflow-hidden border-t border-slate-900"
+      className="relative py-14 sm:py-20 lg:py-28 bg-[#030712] text-white overflow-hidden border-t border-slate-900 content-paint"
+      style={{ contentVisibility: "auto", containIntrinsicSize: "0px 800px" }}
     >
-      {/* Dynamic Ambient Background Glows */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] sm:w-[650px] lg:w-[950px] h-[340px] sm:h-[650px] lg:h-[950px] bg-gradient-to-r from-amber-500/10 via-cyan-500/5 to-transparent rounded-full blur-[130px] pointer-events-none" />
+      {/* Dynamic Ambient Background Glows — lighter on mobile to reduce GPU cost */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] sm:w-[650px] sm:h-[650px] lg:w-[950px] lg:h-[950px] bg-gradient-to-r from-amber-500/10 via-cyan-500/5 to-transparent rounded-full blur-[80px] sm:blur-[130px] pointer-events-none" />
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
@@ -213,7 +208,7 @@ export default function InteractiveAgencyMap() {
         {/* HIGH-END REALISTIC GLOBE CONTAINER */}
         <div 
           id="map-dashboard" 
-          className="relative mt-6 sm:mt-10 rounded-2xl sm:rounded-3xl bg-[#040914] border border-slate-800/90 shadow-[0_25px_80px_rgba(0,0,0,0.85)] overflow-hidden backdrop-blur-xl"
+          className="relative mt-6 sm:mt-10 rounded-2xl sm:rounded-3xl bg-[#040914] border border-slate-800/90 shadow-[0_25px_80px_rgba(0,0,0,0.85)] overflow-hidden backdrop-blur-md sm:backdrop-blur-xl"
         >
           {/* TOP HUD STATUS BAR */}
           <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-slate-800/80 flex items-center justify-between bg-slate-950/80 backdrop-blur-md">
@@ -327,47 +322,44 @@ export default function InteractiveAgencyMap() {
                 <circle cx="400" cy="400" r="350" />
               </g>
 
-              {/* Realistic Curved Connection Beams from Central Hub */}
+              {/* Realistic Curved Connection Beams from Central Hub —
+                  SVG SMIL + CSS animations (GPU-composited, zero JS overhead) */}
               {otherHubs.map((hub, hubIndex) => {
                 const isSelected = selectedHub?.id === hub.id;
                 const midX = (centralHub.coords.x + hub.coords.x) / 2;
                 const midY = (centralHub.coords.y + hub.coords.y) / 2 - 20;
-                
+                const arcPath = `M ${centralHub.coords.x},${centralHub.coords.y} Q ${midX},${midY} ${hub.coords.x},${hub.coords.y}`;
+                const arcDelay = hubIndex * 0.18;
+
                 return (
                   <g key={`arc-group-${hub.id}`}>
+                    {/* Static arc glow line */}
                     <path
-                      d={`M ${centralHub.coords.x},${centralHub.coords.y} Q ${midX},${midY} ${hub.coords.x},${hub.coords.y}`}
+                      d={arcPath}
                       fill="none"
                       stroke="#06B6D4"
                       strokeWidth={isSelected ? "3" : "1.5"}
                       strokeOpacity={isSelected ? "0.85" : "0.3"}
-                      filter="url(#cyanGlow)"
                     />
-                    <motion.path
-                      d={`M ${centralHub.coords.x},${centralHub.coords.y} Q ${midX},${midY} ${hub.coords.x},${hub.coords.y}`}
+                    {/* Animated arc draw — CSS stroke-dashoffset (GPU) */}
+                    <path
+                      d={arcPath}
                       fill="none"
                       stroke="url(#cyanArcGradient)"
                       strokeWidth={isSelected ? "2" : "1"}
                       strokeLinecap="round"
-                      initial={{ pathLength: 0 }}
-                      animate={{ pathLength: 1 }}
-                      transition={{ duration: 1.5, ease: "easeOut" }}
+                      className="arc-draw"
+                      style={{ animationDelay: `${arcDelay}s` }}
                     />
-                    <motion.circle
-                      r="2.5"
-                      fill="#38BDF8"
-                      filter="url(#superGlow)"
-                      animate={{
-                        cx: [centralHub.coords.x, midX, hub.coords.x],
-                        cy: [centralHub.coords.y, midY, hub.coords.y],
-                      }}
-                      transition={{
-                        duration: 3,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: pulseDelays.current[hubIndex] ?? 0,
-                      }}
-                    />
+                    {/* Traveling dot — SMIL animateMotion (native SVG, zero JS) */}
+                    <circle r="2.5" fill="#38BDF8" style={{ filter: "drop-shadow(0 0 3px #38BDF8)" }}>
+                      <animateMotion
+                        dur="3s"
+                        repeatCount="indefinite"
+                        begin={`${arcDelay}s`}
+                        path={arcPath}
+                      />
+                    </circle>
                   </g>
                 );
               })}
