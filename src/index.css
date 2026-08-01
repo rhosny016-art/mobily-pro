@@ -63,6 +63,29 @@
   .content-paint {
     contain: layout style paint;
   }
+  /* Promote backdrop-blur elements to their own compositor layer */
+  .blur-gpu {
+    will-change: backdrop-filter;
+    transform: translateZ(0);
+  }
+}
+
+/* SVG glow fallback for backdrop-blur — lighter GPU cost on mobile */
+@layer components {
+  .glass-glow {
+    position: relative;
+  }
+  .glass-glow::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: inherit;
+    filter: blur(12px);
+    opacity: 0.6;
+    z-index: -1;
+    pointer-events: none;
+  }
 }
 
 /* SVG arc drawing animation — replaces framer-motion pathLength (GPU-friendly) */

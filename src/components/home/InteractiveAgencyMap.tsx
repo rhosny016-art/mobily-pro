@@ -208,7 +208,7 @@ export default function InteractiveAgencyMap() {
         {/* HIGH-END REALISTIC GLOBE CONTAINER */}
         <div 
           id="map-dashboard" 
-          className="relative mt-6 sm:mt-10 rounded-2xl sm:rounded-3xl bg-[#040914] border border-slate-800/90 shadow-[0_25px_80px_rgba(0,0,0,0.85)] overflow-hidden backdrop-blur-md sm:backdrop-blur-xl"
+          className="relative mt-6 sm:mt-10 rounded-2xl sm:rounded-3xl bg-[#040914] border border-slate-800/90 shadow-[0_25px_80px_rgba(0,0,0,0.85)] overflow-hidden backdrop-blur-md sm:backdrop-blur-xl blur-gpu"
         >
           {/* TOP HUD STATUS BAR */}
           <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-slate-800/80 flex items-center justify-between bg-slate-950/80 backdrop-blur-md">

@@ -154,7 +154,7 @@ export default function Hero() {
             className="mt-12 pt-8 border-t border-slate-300/60 flex flex-wrap lg:flex-nowrap items-center gap-4"
           >
             {/* Widget 1: Dynamic Cycling Search Widget */}
-            <div className="flex-1 min-w-[280px] bg-white/90 backdrop-blur-md border border-slate-200/90 rounded-2xl p-2.5 sm:p-3 shadow-md flex items-center justify-between gap-2 hover:border-amber-400/50 transition-colors">
+            <div className="flex-1 min-w-[280px] bg-white/90 backdrop-blur-md blur-gpu border border-slate-200/90 rounded-2xl p-2.5 sm:p-3 shadow-md flex items-center justify-between gap-2 hover:border-amber-400/50 transition-colors">
               <div className="flex items-center gap-2.5 overflow-hidden">
                 <div className="w-8.5 h-8.5 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-400 text-white flex items-center justify-center shrink-0 shadow-sm">
                   <Search className="w-4 h-4" />
@@ -185,7 +185,7 @@ export default function Hero() {
             </div>
 
             {/* Widget 2: Ratings Badge */}
-            <div className="bg-white/90 backdrop-blur-md border border-slate-200/90 rounded-2xl p-2.5 sm:p-3 shadow-md flex items-center gap-3 shrink-0">
+            <div className="bg-white/90 backdrop-blur-md blur-gpu border border-slate-200/90 rounded-2xl p-2.5 sm:p-3 shadow-md flex items-center gap-3 shrink-0">
               <div className="flex flex-col items-center">
                 <div className="flex items-center gap-0.5 text-amber-500">
                   <Star className="w-3.5 h-3.5 fill-amber-500" />
@@ -257,6 +257,9 @@ export default function Hero() {
                   loading="eager"
                   decoding="async"
                   fetchPriority="high"
+                  width={520}
+                  height={520}
+                  sizes="(max-width: 640px) 290px, (max-width: 768px) 340px, (max-width: 1024px) 440px, 520px"
                   className="w-full h-full object-contain filter contrast-[1.08] brightness-[1.02] drop-shadow-[0_15px_30px_rgba(15,23,42,0.3)] select-none transition-all duration-300 rounded-2xl"
                   referrerPolicy="no-referrer"
                 />

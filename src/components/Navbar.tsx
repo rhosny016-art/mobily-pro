@@ -104,7 +104,7 @@ export default function Navbar() {
       visible ? "translate-y-0 opacity-100" : "-translate-y-28 opacity-0"
     }`}>
       <div
-        className="mx-auto w-full max-w-7xl overflow-hidden rounded-[22px] border border-white/80 bg-white/80 backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.06)] text-slate-800 sm:rounded-full"
+        className="mx-auto w-full max-w-7xl overflow-hidden rounded-[22px] border border-white/80 bg-white/80 backdrop-blur-xl blur-gpu shadow-[0_8px_30px_rgba(0,0,0,0.06)] text-slate-800 sm:rounded-full"
       >
         <div className="flex h-14 items-center justify-between gap-2 px-3 py-1 sm:h-14 sm:px-4 md:h-16 md:px-7">
           {/* Logo on Right side in RTL */}
@@ -193,7 +193,7 @@ export default function Navbar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setOpen(false)}
-              className="fixed inset-0 z-50 bg-slate-950/40 backdrop-blur-md pointer-events-auto"
+              className="fixed inset-0 z-50 bg-slate-950/40 backdrop-blur-md blur-gpu pointer-events-auto"
             />
 
             <motion.div

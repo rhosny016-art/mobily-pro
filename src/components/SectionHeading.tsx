@@ -29,7 +29,7 @@ export default function SectionHeading({ id, eyebrow, title, subtitle, light = f
           viewport={{ once: true, amount: 0.1 }}
           custom={0}
           className={`inline-block px-4 py-1.5 rounded-full text-sm font-semibold mb-4 ${
-            light ? "glass-card text-white" : "bg-primary/10 text-primary"
+            light ? "glass-card text-white blur-gpu" : "bg-primary/10 text-primary"
           }`}
         >
           {eyebrow}
