@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Globe, Sparkles, ArrowLeft, X, CheckCircle2, MapPin, Compass, Radio, Trophy
@@ -186,6 +186,12 @@ export default function InteractiveAgencyMap() {
   const centralHub = DIGITAL_HUBS.find(h => h.isCentral) || DIGITAL_HUBS[0];
   const otherHubs = DIGITAL_HUBS.filter(h => !h.isCentral);
 
+  // Stable per-hub pulse delays — computed once (not per render) so framer-motion
+  // does not re-initialize the infinite animation on every parent re-render.
+  const pulseDelays = useRef<number[]>(
+    otherHubs.map((_, i) => (i * 2) % 4)
+  );
+
   return (
     <section 
       id="network" 
@@ -322,7 +328,7 @@ export default function InteractiveAgencyMap() {
               </g>
 
               {/* Realistic Curved Connection Beams from Central Hub */}
-              {otherHubs.map((hub) => {
+              {otherHubs.map((hub, hubIndex) => {
                 const isSelected = selectedHub?.id === hub.id;
                 const midX = (centralHub.coords.x + hub.coords.x) / 2;
                 const midY = (centralHub.coords.y + hub.coords.y) / 2 - 20;
@@ -359,7 +365,7 @@ export default function InteractiveAgencyMap() {
                         duration: 3,
                         repeat: Infinity,
                         ease: "easeInOut",
-                        delay: Math.random() * 2,
+                        delay: pulseDelays.current[hubIndex] ?? 0,
                       }}
                     />
                   </g>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X, ArrowLeft, PhoneCall } from "lucide-react";
@@ -14,6 +14,8 @@ const LINKS = [
   { href: "#faq", label: "الأسئلة الشائعة", id: "faq" },
 ];
 
+const SECTION_IDS = LINKS.map((l) => l.id);
+
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [visible, setVisible] = useState(true);
@@ -21,45 +23,53 @@ export default function Navbar() {
   const [activeSection, setActiveSection] = useState("hero");
   const { pathname } = useLocation();
 
+  // Keep latest `open` inside a ref so the scroll handler subscription is stable
+  // and does not need to be re-created on every menu toggle.
+  const openRef = useRef(open);
+  useEffect(() => {
+    openRef.current = open;
+  }, [open]);
+
   useEffect(() => {
     let lastScrollY = window.scrollY;
-    
-    const onScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      if (open) {
-        setVisible(true);
-      } else if (currentScrollY > 80) {
-        if (currentScrollY > lastScrollY) {
-          setVisible(false);
-        } else {
-          setVisible(true);
-        }
-      } else {
-        setVisible(true);
-      }
-      
-      setScrolled(currentScrollY > 20);
-      lastScrollY = currentScrollY;
+    let ticking = false;
 
-      // Section highlight
-      const sections = LINKS.map(l => l.id);
-      for (const sectionId of sections) {
-        const el = document.getElementById(sectionId);
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          if (rect.top <= 200 && rect.bottom >= 100) {
-            setActiveSection(sectionId);
-            break;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
+        const currentScrollY = window.scrollY;
+
+        // Visibility: only update state when the value actually changes.
+        if (!openRef.current && currentScrollY > 80) {
+          const shouldHide = currentScrollY > lastScrollY;
+          setVisible((v) => (v === !shouldHide ? !shouldHide : v));
+        } else {
+          setVisible((v) => (v === false ? true : v));
+        }
+
+        setScrolled((s) => (s !== currentScrollY > 20 ? currentScrollY > 20 : s));
+        lastScrollY = currentScrollY;
+
+        // Section highlight: early exit once a match is found.
+        for (const sectionId of SECTION_IDS) {
+          const el = document.getElementById(sectionId);
+          if (el) {
+            const rect = el.getBoundingClientRect();
+            if (rect.top <= 200 && rect.bottom >= 100) {
+              setActiveSection((cur) => (cur === sectionId ? cur : sectionId));
+              break;
+            }
           }
         }
-      }
+      });
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
-  }, [open]);
+  }, []);
 
   useEffect(() => setOpen(false), [pathname]);
 

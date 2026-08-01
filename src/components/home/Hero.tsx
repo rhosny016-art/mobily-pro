@@ -35,7 +35,7 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative scroll-mt-24 overflow-hidden pt-28 pb-16 md:pt-36 md:pb-24 lg:pt-40 lg:pb-28 bg-[#EEF2F7]"
+      className="relative scroll-mt-24 overflow-hidden pt-28 pb-16 md:pt-36 md:pb-24 lg:pt-40 lg:pb-28 bg-[#EEF2F7] content-paint"
       dir="rtl"
     >
       {/* Blueprint Grid Pattern Background */}
@@ -250,12 +250,13 @@ export default function Hero() {
                   ease: "easeInOut",
                 }}
               >
-                {/* 3D Solid Island Image without mix-blend-multiply to preserve crisp solid structure */}
+                {/* 3D Solid Island Image — above the fold, so eager + high priority for best LCP */}
                 <img
                   src={heroIslandImg}
                   alt="المدينة العائمة لتغطية خرائط جوجل والأنشطة التجارية - وكالة دلّني"
-                  loading="lazy"
+                  loading="eager"
                   decoding="async"
+                  fetchPriority="high"
                   className="w-full h-full object-contain filter contrast-[1.08] brightness-[1.02] drop-shadow-[0_15px_30px_rgba(15,23,42,0.3)] select-none transition-all duration-300 rounded-2xl"
                   referrerPolicy="no-referrer"
                 />

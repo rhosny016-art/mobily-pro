@@ -83,7 +83,7 @@ export default function Services() {
                   ))}
                 </ul>
                 <div className="pt-2">
-                  <WhatsAppButton serviceTitle={s.title} label="طلب الخدمة عبر واتساب" />
+                  <WhatsAppButton serviceTitle={s.title}>طلب الخدمة عبر واتساب</WhatsAppButton>
                 </div>
               </div>
 
