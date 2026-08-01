@@ -11,9 +11,12 @@
     <meta property="og:type" content="website" />
     <title>دلّني | وكالة تسويق رقمي متكاملة</title>
 
-    <!-- Fonts: preconnect + async load (non render-blocking). Cairo weights only, font-display swap. -->
+    <!-- Fonts: preconnect + async load (non render-blocking).
+         Cairo weights only (400/700/900), font-display swap, system fallback stack
+         prevents invisible-text (FOIT) and layout shift before the webfont lands. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
     <link
       rel="preload"
       as="style"
@@ -23,6 +26,14 @@
     <noscript>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" />
     </noscript>
+    <style>
+      /* Render the brand text immediately with the closest system fallback so the
+         hero headline paints before the webfont arrives (anti-FOUC). */
+      :root { --dalni-fallback: "Tahoma", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif; }
+      html, body { font-family: var(--dalni-fallback); }
+      /* Pre-paint the page background to avoid a white flash before the bundle boots. */
+      body { background: #EEF2F7; }
+    </style>
   </head>
   <body>
     <div id="root"></div>

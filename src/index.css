@@ -1,7 +1,9 @@
 @import "tailwindcss";
 
-/* Fonts are preconnected + loaded via <link> in index.html for non-blocking rendering.
-   Only Cairo weights actually used across the UI are requested. */
+/* Fonts are preconnected + loaded via <link> in index.html for non-blocking
+   rendering. Only the Cairo weights actually used across the UI are requested.
+   The system fallback stack (set in index.html) paints instantly while Cairo
+   downloads, so there's no invisible-text / layout-shift window. */
 @theme {
   --color-background: hsl(0 0% 100%);
   --color-foreground: hsl(222 47% 11%);
@@ -12,8 +14,8 @@
   --color-muted-foreground: hsl(220 9% 46%);
   --color-destructive: hsl(0 84% 60%);
   --color-border: hsl(220 13% 91%);
-  --font-sans: "Cairo", ui-sans-serif, system-ui, sans-serif;
-  --font-heading: "Cairo", sans-serif;
+  --font-sans: "Cairo", "Tahoma", "Segoe UI", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-heading: "Cairo", "Tahoma", "Segoe UI", sans-serif;
 }
 
 @layer base {
@@ -23,6 +25,9 @@
   html {
     direction: rtl;
     scroll-behavior: smooth;
+    /* Snap font sizing to a stable base; the app already uses rem-based scales. */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
   body {
     background: var(--color-background);
@@ -32,6 +37,9 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Slightly tighter Arabic kerning keeps headings crisp at all sizes. */
+    font-synthesis: none;
+    font-feature-settings: "kern" 1;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
@@ -54,7 +62,10 @@
   }
 }
 
-/* Performance: GPU-accelerate backdrop-blur elements and animated floats */
+/* ---- Performance utilities ------------------------------------------------
+   GPU-promote compositor layers for the few elements that actually animate or
+   blur, and contain layout/paint cost for big offscreen-ish sections. Keeping
+   these in a dedicated layer means Tailwind only emits them when used. */
 @layer utilities {
   .gpu {
     will-change: transform, opacity;
@@ -63,15 +74,14 @@
   .content-paint {
     contain: layout style paint;
   }
-  /* Promote backdrop-blur elements to their own compositor layer */
   .blur-gpu {
     will-change: backdrop-filter;
     transform: translateZ(0);
   }
 }
 
-/* SVG glow fallback for backdrop-blur — lighter GPU cost on mobile */
 @layer components {
+  /* SVG glow fallback for backdrop-blur — lighter GPU cost on mobile. */
   .glass-glow {
     position: relative;
   }
@@ -88,29 +98,7 @@
   }
 }
 
-/* SVG arc drawing animation — replaces framer-motion pathLength (GPU-friendly) */
-@keyframes arc-draw {
-  from { stroke-dashoffset: 1000; }
-  to   { stroke-dashoffset: 0; }
-}
-.arc-draw {
-  stroke-dasharray: 1000;
-  stroke-dashoffset: 1000;
-  animation: arc-draw 1.5s ease-out forwards;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
+/* ---- Shared gradient / glass surfaces (single source of truth) ----------- */
 .gradient-hero {
   background: linear-gradient(135deg, #1F2937 0%, #1E40AF 100%);
 }
@@ -127,6 +115,19 @@
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
+/* ---- Animations -----------------------------------------------------------
+   Kept GPU-friendly (transform/opacity only) and throttled so mobile devices
+   don't pay for expensive repaints. prefers-reduced-motion zeroes them out. */
+@keyframes arc-draw {
+  from { stroke-dashoffset: 1000; }
+  to   { stroke-dashoffset: 0; }
+}
+.arc-draw {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: arc-draw 1.5s ease-out forwards;
+}
+
 @keyframes float {
   0% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
@@ -135,6 +136,32 @@
 .animate-float {
   animation: float 3s ease-in-out infinite;
 }
+
+/* Lightweight shimmer used by lazy-image skeletons — pure CSS, no JS frames. */
+@keyframes dalni-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.dalni-skeleton {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 37%, #f1f5f9 63%);
+  background-size: 200% 100%;
+  animation: dalni-shimmer 1.5s linear infinite;
+}
+
+/* LoadingFallback: pulsing rings (scale + opacity) — GPU-friendly, no JS frames. */
+@keyframes dalni-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.25); opacity: 0.15; }
+}
+.dalni-pulse-slow { animation: dalni-pulse 2s ease-in-out infinite; }
+.dalni-pulse-fast { animation: dalni-pulse 2s ease-in-out 0.5s infinite; }
+
+/* LoadingFallback: sliding progress bar — translateX only, fully composited. */
+@keyframes dalni-progress {
+  0% { transform: translateX(-130%); }
+  100% { transform: translateX(420%); }
+}
+.dalni-progress { animation: dalni-progress 1.6s ease-in-out infinite; }
 
 /* إخفاء شريط التمرير مع الإبقاء على ميزة التمرير */
 .scrollbar-none::-webkit-scrollbar {
@@ -145,3 +172,14 @@
   scrollbar-width: none;  /* Firefox */
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

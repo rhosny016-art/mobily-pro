@@ -9,6 +9,8 @@ interface Props {
   center?: boolean;
 }
 
+// Shared fade-up variant; kept at module scope so each instance reuses the same
+// object reference instead of allocating a new variant object on every render.
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
   visible: (i: number) => ({

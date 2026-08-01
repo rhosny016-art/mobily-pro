@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
+import {
   Globe, Sparkles, ArrowLeft, X, CheckCircle2, MapPin, Compass, Radio, Trophy
 } from "lucide-react";
 import SectionHeading from "@/components/SectionHeading";
@@ -18,15 +18,15 @@ interface DigitalHub {
   badgePos?: "top" | "bottom" | "left" | "right";
 }
 
-// Well-organized, realistic geographic coordinates inside safe bounds [150..650] on 800x800 canvas
+// Well-organized, realistic geographic coordinates inside safe bounds [150..650] on 800x800 canvas.
 const DIGITAL_HUBS: DigitalHub[] = [
   // --- المركز الرئيسي ---
-  { 
-    id: "amm", 
-    name: "المقر الرئيسي", 
+  {
+    id: "amm",
+    name: "المقر الرئيسي",
     country: "إدارة التغطية والتسويق",
     region: "global",
-    clients: "+150 مشروع ناجح", 
+    clients: "+150 مشروع ناجح",
     details: "المركز السحابي الرئيسي لوكالة دلّني للتسويق الرقمي المتكامل، لتنسيق استراتيجيات النجاح وتصدر المحركات والخرائط والإعلانات الممولة.",
     isCentral: true,
     coords: { x: 500, y: 450 },
@@ -34,168 +34,263 @@ const DIGITAL_HUBS: DigitalHub[] = [
   },
 
   // --- دول الخليج العربي ---
-  { 
-    id: "ruh", 
-    name: "الرياض", 
+  {
+    id: "ruh",
+    name: "الرياض",
     country: "السعودية",
     region: "gulf",
-    clients: "+45 شركة نشطة", 
-    details: "إدارة متكاملة لحملات النجاح الإعلانية، تحسين خرائط Google وصناعة المحتوى للشركات بالمملكة.", 
+    clients: "+45 شركة نشطة",
+    details: "إدارة متكاملة لحملات النجاح الإعلانية، تحسين خرائط Google وصناعة المحتوى للشركات بالمملكة.",
     coords: { x: 440, y: 410 },
     badgePos: "top"
   },
-  { 
-    id: "jed", 
-    name: "جدة", 
+  {
+    id: "jed",
+    name: "جدة",
     country: "السعودية",
     region: "gulf",
-    clients: "+30 علامة تجارية", 
-    details: "بناء الهويات البصرية والحلول التسويقية الميدانية لقطاع التجزئة والمطاعم بالمنطقة الغربية.", 
+    clients: "+30 علامة تجارية",
+    details: "بناء الهويات البصرية والحلول التسويقية الميدانية لقطاع التجزئة والمطاعم بالمنطقة الغربية.",
     coords: { x: 380, y: 460 },
     badgePos: "bottom"
   },
-  { 
-    id: "kwi", 
-    name: "الكويت", 
+  {
+    id: "kwi",
+    name: "الكويت",
     country: "الكويت",
     region: "gulf",
-    clients: "+25 شريك نمو", 
-    details: "استشارات التجارة الإلكترونية، تحسين نتائج المحركات Local SEO للشركات المحلية بالديرة.", 
+    clients: "+25 شريك نمو",
+    details: "استشارات التجارة الإلكترونية، تحسين نتائج المحركات Local SEO للشركات المحلية بالديرة.",
     coords: { x: 480, y: 340 },
     badgePos: "top"
   },
-  { 
-    id: "dxb", 
-    name: "دبي", 
+  {
+    id: "dxb",
+    name: "دبي",
     country: "الإمارات",
     region: "gulf",
-    clients: "+35 مشروع قائم", 
-    details: "حلول تقنية رائدة، توثيق الحسابات والأنشطة التجارية للمؤسسات المبتكرة بالإمارات.", 
+    clients: "+35 مشروع قائم",
+    details: "حلول تقنية رائدة، توثيق الحسابات والأنشطة التجارية للمؤسسات المبتكرة بالإمارات.",
     coords: { x: 560, y: 390 },
     badgePos: "right"
   },
 
   // --- الشرق الأوسط وشمال أفريقيا ---
-  { 
-    id: "egy", 
-    name: "مصر", 
+  {
+    id: "egy",
+    name: "مصر",
     country: "مصر",
     region: "mena",
-    clients: "+60 مشروع نشط", 
-    details: "مركز البرمجة والإنتاج الإبداعي وإدارة بروفايلات خرائط جوجل والحملات التسويقية بكافة المحافظات.", 
+    clients: "+60 مشروع نشط",
+    details: "مركز البرمجة والإنتاج الإبداعي وإدارة بروفايلات خرائط جوجل والحملات التسويقية بكافة المحافظات.",
     coords: { x: 320, y: 400 },
     badgePos: "bottom"
   },
-  { 
-    id: "amm_jo", 
-    name: "عَمّان", 
+  {
+    id: "amm_jo",
+    name: "عَمّان",
     country: "الأردن",
     region: "mena",
-    clients: "+16 شركة", 
-    details: "حلول إعلانية وتطوير البرمجيات للمتاجر الإلكترونية وشركات التكنولوجيا بالأردن.", 
+    clients: "+16 شركة",
+    details: "حلول إعلانية وتطوير البرمجيات للمتاجر الإلكترونية وشركات التكنولوجيا بالأردن.",
     coords: { x: 390, y: 330 },
     badgePos: "top"
   },
-  { 
-    id: "bgd", 
-    name: "بغداد", 
+  {
+    id: "bgd",
+    name: "بغداد",
     country: "العراق",
     region: "mena",
-    clients: "+14 مشروع", 
-    details: "تسويق الأنشطة التجارية والتجارة الإلكترونية والظهور بالمحركات والخرائط بالعراق.", 
+    clients: "+14 مشروع",
+    details: "تسويق الأنشطة التجارية والتجارة الإلكترونية والظهور بالمحركات والخرائط بالعراق.",
     coords: { x: 440, y: 280 },
     badgePos: "right"
   },
-  { 
-    id: "cas", 
-    name: "المغرب", 
+  {
+    id: "cas",
+    name: "المغرب",
     country: "المغرب",
     region: "mena",
-    clients: "+12 شركة", 
-    details: "تقديم الاستشارات التسويقية والسوشيال ميديا للشركات والمتاجر في المغرب ودول المغارب.", 
+    clients: "+12 شركة",
+    details: "تقديم الاستشارات التسويقية والسوشيال ميديا للشركات والمتاجر في المغرب ودول المغارب.",
     coords: { x: 190, y: 360 },
     badgePos: "left"
   },
-  { 
-    id: "tun", 
-    name: "تونس", 
+  {
+    id: "tun",
+    name: "تونس",
     country: "تونس",
     region: "mena",
-    clients: "+10 شركات", 
-    details: "تسويق محلي وتطوير الهويات التجارية للمؤسسات والمشاريع بجمهورية تونس.", 
+    clients: "+10 شركات",
+    details: "تسويق محلي وتطوير الهويات التجارية للمؤسسات والمشاريع بجمهورية تونس.",
     coords: { x: 260, y: 290 },
     badgePos: "top"
   },
-  { 
-    id: "ist", 
-    name: "تركيا", 
+  {
+    id: "ist",
+    name: "تركيا",
     country: "تركيا",
     region: "mena",
-    clients: "+15 شركة", 
-    details: "خدمات تسويق وتوثيق الشركات الناشئة والعلامات المستهدفة للجمهور العربي والتركي.", 
+    clients: "+15 شركة",
+    details: "خدمات تسويق وتوثيق الشركات الناشئة والعلامات المستهدفة للجمهور العربي والتركي.",
     coords: { x: 360, y: 230 },
     badgePos: "top"
   },
 
   // --- أوروبا والعالم (Global) ---
-  { 
-    id: "lon", 
-    name: "لندن", 
+  {
+    id: "lon",
+    name: "لندن",
     country: "المملكة المتحدة",
     region: "global",
-    clients: "+12 مؤسسة", 
-    details: "إدارة وتسويق الأعمال الموجهة للجاليات العربية والاستثمارات الشرق أوسطية في بريطانيا.", 
+    clients: "+12 مؤسسة",
+    details: "إدارة وتسويق الأعمال الموجهة للجاليات العربية والاستثمارات الشرق أوسطية في بريطانيا.",
     coords: { x: 220, y: 190 },
     badgePos: "top"
   },
-  { 
-    id: "fra", 
-    name: "ألمانيا", 
+  {
+    id: "fra",
+    name: "ألمانيا",
     country: "ألمانيا",
     region: "global",
-    clients: "+8 شركاء", 
-    details: "استشارات تقنية وتسويق سحابي للعلامات التجارية العاملة في السوق الأوروبي.", 
+    clients: "+8 شركاء",
+    details: "استشارات تقنية وتسويق سحابي للعلامات التجارية العاملة في السوق الأوروبي.",
     coords: { x: 290, y: 180 },
     badgePos: "top"
   },
-  { 
-    id: "nyc", 
-    name: "أمريكا", 
+  {
+    id: "nyc",
+    name: "أمريكا",
     country: "أمريكا",
     region: "global",
-    clients: "+10 مشاريع", 
-    details: "ربط العلامات التجارية بالأسواق الأمريكية وتوسيع نطاق الحملات العابرة للقارات.", 
+    clients: "+10 مشاريع",
+    details: "ربط العلامات التجارية بالأسواق الأمريكية وتوسيع نطاق الحملات العابرة للقارات.",
     coords: { x: 160, y: 270 },
     badgePos: "left"
   },
-  { 
-    id: "kul", 
-    name: "ماليزيا", 
+  {
+    id: "kul",
+    name: "ماليزيا",
     country: "ماليزيا",
     region: "global",
-    clients: "+9 مشاريع", 
-    details: "تغطية تسويقية وتقنية للمشاريع والاستثمارات المتواجدة بدول جنوب شرق آسيا.", 
+    clients: "+9 مشاريع",
+    details: "تغطية تسويقية وتقنية للمشاريع والاستثمارات المتواجدة بدول جنوب شرق آسيا.",
     coords: { x: 630, y: 510 },
     badgePos: "right"
   },
 ];
 
+// Derived once; the hubs list never changes for the lifetime of the component.
+const centralHub = DIGITAL_HUBS.find((h) => h.isCentral) || DIGITAL_HUBS[0];
+const otherHubs = DIGITAL_HUBS.filter((h) => !h.isCentral);
+
+/** A single connection-arc beam: static glow line + animated draw + travelling dot.
+ *  Rendered as a memoized row inside the SVG so selecting a hub only Restyles the
+ *  two affected arcs instead of re-rendering the whole <g> tree. */
+const ArcBeam = memo(function ArcBeam({
+  hub,
+  hubIndex,
+}: {
+  hub: DigitalHub;
+  hubIndex: number;
+}) {
+  const midX = (centralHub.coords.x + hub.coords.x) / 2;
+  const midY = (centralHub.coords.y + hub.coords.y) / 2 - 20;
+  const arcPath = `M ${centralHub.coords.x},${centralHub.coords.y} Q ${midX},${midY} ${hub.coords.x},${hub.coords.y}`;
+  const arcDelay = hubIndex * 0.18;
+
+  return (
+    <g>
+      {/* Static arc glow line */}
+      <path
+        d={arcPath}
+        fill="none"
+        stroke="#06B6D4"
+        strokeWidth="1.5"
+        strokeOpacity="0.3"
+      />
+      {/* Animated arc draw — CSS stroke-dashoffset (GPU) */}
+      <path
+        d={arcPath}
+        fill="none"
+        stroke="url(#cyanArcGradient)"
+        strokeWidth="1"
+        strokeLinecap="round"
+        className="arc-draw"
+        style={{ animationDelay: `${arcDelay}s` }}
+      />
+      {/* Traveling dot — SMIL animateMotion (native SVG, zero JS) */}
+      <circle r="2.5" fill="#38BDF8" style={{ filter: "drop-shadow(0 0 3px #38BDF8)" }}>
+        <animateMotion
+          dur="3s"
+          repeatCount="indefinite"
+          begin={`${arcDelay}s`}
+          path={arcPath}
+        />
+      </circle>
+    </g>
+  );
+});
+
+/** A single regional pin — memoized so click-selection elsewhere doesn't re-render
+ *  every pin label. */
+const HubPin = memo(function HubPin({
+  hub,
+  isSelected,
+  onClick,
+}: {
+  hub: DigitalHub;
+  isSelected: boolean;
+  onClick: (hub: DigitalHub) => void;
+}) {
+  // Smart alignment to prevent text badges from clipping left/right edges on mobile.
+  const labelAlignClass =
+    hub.coords.x < 220 ? "left-0 translate-x-0" :
+    hub.coords.x > 620 ? "right-0 translate-x-0" :
+    "-translate-x-1/2 left-1/2";
+
+  return (
+    <div
+      id={`pin-node-${hub.id}`}
+      className="absolute z-30 cursor-pointer -translate-x-1/2 -translate-y-1/2 flex flex-col items-center group/pin"
+      style={{
+        left: `${(hub.coords.x / 800) * 100}%`,
+        top: `${(hub.coords.y / 800) * 100}%`,
+      }}
+      onClick={() => onClick(hub)}
+    >
+      <div className={`relative flex items-center justify-center w-4 h-4 sm:w-6 sm:h-6 rounded-full transition-all shadow-md border ${
+        isSelected
+          ? "bg-gradient-to-b from-amber-300 via-amber-400 to-amber-500 border-white shadow-[0_0_14px_rgba(245,158,11,0.9)] scale-110"
+          : "bg-slate-900 border-amber-400/90 hover:border-white hover:bg-amber-600"
+      }`}>
+        <MapPin className={`w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 ${isSelected ? "text-slate-950" : "text-amber-400"}`} />
+      </div>
+
+      <div className={`absolute top-full mt-0.5 ${labelAlignClass} bg-[#070E1C]/95 border text-[8px] sm:text-[11px] font-bold px-1 sm:px-1.5 py-0.5 rounded shadow-md whitespace-nowrap backdrop-blur-sm pointer-events-none transition-all ${
+        isSelected
+          ? "border-amber-400 text-amber-300 font-black scale-105"
+          : "border-slate-800 text-slate-200 group-hover/pin:border-amber-400/80 group-hover/pin:text-amber-300"
+      }`}>
+        {hub.name}
+      </div>
+    </div>
+  );
+});
+
 export default function InteractiveAgencyMap() {
   const [selectedHub, setSelectedHub] = useState<DigitalHub | null>(null);
 
-  const centralHub = DIGITAL_HUBS.find(h => h.isCentral) || DIGITAL_HUBS[0];
-  const otherHubs = DIGITAL_HUBS.filter(h => !h.isCentral);
-
   return (
-    <section 
-      id="network" 
+    <section
+      id="network"
       aria-label="خريطة النجاح للأنشطة التجارية"
       className="relative py-14 sm:py-20 lg:py-28 bg-[#030712] text-white overflow-hidden border-t border-slate-900 content-paint"
       style={{ contentVisibility: "auto", containIntrinsicSize: "0px 800px" }}
     >
       {/* Dynamic Ambient Background Glows — lighter on mobile to reduce GPU cost */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] sm:w-[650px] sm:h-[650px] lg:w-[950px] lg:h-[950px] bg-gradient-to-r from-amber-500/10 via-cyan-500/5 to-transparent rounded-full blur-[80px] sm:blur-[130px] pointer-events-none" />
-      
+
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           id="network-section-heading"
@@ -206,8 +301,8 @@ export default function InteractiveAgencyMap() {
         />
 
         {/* HIGH-END REALISTIC GLOBE CONTAINER */}
-        <div 
-          id="map-dashboard" 
+        <div
+          id="map-dashboard"
           className="relative mt-6 sm:mt-10 rounded-2xl sm:rounded-3xl bg-[#040914] border border-slate-800/90 shadow-[0_25px_80px_rgba(0,0,0,0.85)] overflow-hidden backdrop-blur-md sm:backdrop-blur-xl blur-gpu"
         >
           {/* TOP HUD STATUS BAR */}
@@ -227,10 +322,10 @@ export default function InteractiveAgencyMap() {
 
           {/* MAIN GLOBE CANVAS WRAPPER - BOUNDED & SPACED */}
           <div id="map-viewport" className="w-full max-w-[760px] aspect-square mx-auto relative flex items-center justify-center p-2 sm:p-6 overflow-hidden">
-            
+
             {/* REALISTIC HIGH-PRECISION VECTOR MAP & TERRAIN SVG */}
-            <svg 
-              viewBox="0 0 800 800" 
+            <svg
+              viewBox="0 0 800 800"
               className="w-full h-full block select-none"
               preserveAspectRatio="xMidYMid meet"
             >
@@ -274,10 +369,6 @@ export default function InteractiveAgencyMap() {
                   <feGaussianBlur stdDeviation="5" result="blur" />
                   <feComposite in="SourceGraphic" in2="blur" operator="over" />
                 </filter>
-                <filter id="cyanGlow" x="-30%" y="-30%" width="160%" height="160%">
-                  <feGaussianBlur stdDeviation="3" result="blur" />
-                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                </filter>
               </defs>
 
               {/* Realistic Globe Sphere Base & Atmosphere Rim */}
@@ -299,19 +390,19 @@ export default function InteractiveAgencyMap() {
 
               {/* REALISTIC DETAILED CONTINENT VECTOR GEOMETRY */}
               <g stroke="#D97706" strokeWidth="1.2" strokeOpacity="0.5" fill="url(#realisticLandGrad)">
-                
+
                 {/* Europe & United Kingdom */}
                 <path d="M 200,170 Q 215,150 230,165 Q 240,155 255,160 Q 280,150 300,165 Q 320,155 340,175 Q 360,170 380,185 Q 390,210 375,225 Q 350,235 330,220 Q 310,240 290,230 Q 270,220 250,235 Q 230,225 210,210 Q 195,190 200,170 Z" />
-                
+
                 {/* Iberian Peninsula & North Africa (Maghreb to Egypt) */}
                 <path d="M 170,320 Q 200,300 240,290 Q 280,285 320,295 Q 360,310 390,340 Q 400,370 380,410 Q 350,430 310,425 Q 260,420 220,400 Q 180,380 165,350 Q 160,335 170,320 Z" />
-                
+
                 {/* Arabian Peninsula & Levant (Saudi Arabia, Oman, Gulf, Jordan, Iraq) */}
                 <path d="M 380,330 Q 420,310 460,300 Q 500,315 540,340 Q 575,370 580,420 Q 570,470 530,490 Q 480,505 440,490 Q 400,470 385,430 Q 375,380 380,330 Z" />
-                
+
                 {/* Asia & Anatolia (Turkey, Mesopotamia, Iran to SE Asia) */}
                 <path d="M 350,220 Q 400,200 460,210 Q 520,195 580,230 Q 640,260 670,320 Q 690,390 660,460 Q 620,530 570,540 Q 530,510 510,460 Q 490,410 460,380 Q 420,360 380,340 Q 360,300 350,220 Z" />
-                
+
                 {/* North & South Americas (West Side of Globe) */}
                 <path d="M 100,220 Q 130,190 170,200 Q 190,230 180,270 Q 160,310 135,320 Q 110,300 95,260 Q 90,240 100,220 Z" />
 
@@ -324,45 +415,9 @@ export default function InteractiveAgencyMap() {
 
               {/* Realistic Curved Connection Beams from Central Hub —
                   SVG SMIL + CSS animations (GPU-composited, zero JS overhead) */}
-              {otherHubs.map((hub, hubIndex) => {
-                const isSelected = selectedHub?.id === hub.id;
-                const midX = (centralHub.coords.x + hub.coords.x) / 2;
-                const midY = (centralHub.coords.y + hub.coords.y) / 2 - 20;
-                const arcPath = `M ${centralHub.coords.x},${centralHub.coords.y} Q ${midX},${midY} ${hub.coords.x},${hub.coords.y}`;
-                const arcDelay = hubIndex * 0.18;
-
-                return (
-                  <g key={`arc-group-${hub.id}`}>
-                    {/* Static arc glow line */}
-                    <path
-                      d={arcPath}
-                      fill="none"
-                      stroke="#06B6D4"
-                      strokeWidth={isSelected ? "3" : "1.5"}
-                      strokeOpacity={isSelected ? "0.85" : "0.3"}
-                    />
-                    {/* Animated arc draw — CSS stroke-dashoffset (GPU) */}
-                    <path
-                      d={arcPath}
-                      fill="none"
-                      stroke="url(#cyanArcGradient)"
-                      strokeWidth={isSelected ? "2" : "1"}
-                      strokeLinecap="round"
-                      className="arc-draw"
-                      style={{ animationDelay: `${arcDelay}s` }}
-                    />
-                    {/* Traveling dot — SMIL animateMotion (native SVG, zero JS) */}
-                    <circle r="2.5" fill="#38BDF8" style={{ filter: "drop-shadow(0 0 3px #38BDF8)" }}>
-                      <animateMotion
-                        dur="3s"
-                        repeatCount="indefinite"
-                        begin={`${arcDelay}s`}
-                        path={arcPath}
-                      />
-                    </circle>
-                  </g>
-                );
-              })}
+              {otherHubs.map((hub, hubIndex) => (
+                <ArcBeam key={`arc-group-${hub.id}`} hub={hub} hubIndex={hubIndex} />
+              ))}
             </svg>
 
             {/* OVERLAY INTERACTIVE PINS - PERFECTLY ORGANIZED & BOUNDED INSIDE MAP */}
@@ -391,43 +446,14 @@ export default function InteractiveAgencyMap() {
             </motion.div>
 
             {/* REGIONAL CITY PINS - ELEGANTLY SPACED & NON-CLIPPING */}
-            {otherHubs.map((hub) => {
-              const isSelected = selectedHub?.id === hub.id;
-              // Smart alignment to prevent text badges from clipping left/right edges on mobile
-              const labelAlignClass = 
-                hub.coords.x < 220 ? "left-0 translate-x-0" :
-                hub.coords.x > 620 ? "right-0 translate-x-0" :
-                "-translate-x-1/2 left-1/2";
-
-              return (
-                <div
-                  key={`pin-node-${hub.id}`}
-                  id={`pin-node-${hub.id}`}
-                  className="absolute z-30 cursor-pointer -translate-x-1/2 -translate-y-1/2 flex flex-col items-center group/pin"
-                  style={{
-                    left: `${(hub.coords.x / 800) * 100}%`,
-                    top: `${(hub.coords.y / 800) * 100}%`,
-                  }}
-                  onClick={() => setSelectedHub(hub)}
-                >
-                  <div className={`relative flex items-center justify-center w-4 h-4 sm:w-6 sm:h-6 rounded-full transition-all shadow-md border ${
-                    isSelected
-                      ? "bg-gradient-to-b from-amber-300 via-amber-400 to-amber-500 border-white shadow-[0_0_14px_rgba(245,158,11,0.9)] scale-110"
-                      : "bg-slate-900 border-amber-400/90 hover:border-white hover:bg-amber-600"
-                  }`}>
-                    <MapPin className={`w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 ${isSelected ? "text-slate-950" : "text-amber-400"}`} />
-                  </div>
-
-                  <div className={`absolute top-full mt-0.5 ${labelAlignClass} bg-[#070E1C]/95 border text-[8px] sm:text-[11px] font-bold px-1 sm:px-1.5 py-0.5 rounded shadow-md whitespace-nowrap backdrop-blur-sm pointer-events-none transition-all ${
-                    isSelected
-                      ? "border-amber-400 text-amber-300 font-black scale-105"
-                      : "border-slate-800 text-slate-200 group-hover/pin:border-amber-400/80 group-hover/pin:text-amber-300"
-                  }`}>
-                    {hub.name}
-                  </div>
-                </div>
-              );
-            })}
+            {otherHubs.map((hub) => (
+              <HubPin
+                key={`pin-node-${hub.id}`}
+                hub={hub}
+                isSelected={selectedHub?.id === hub.id}
+                onClick={setSelectedHub}
+              />
+            ))}
           </div>
 
           {/* BOTTOM QUICK STATS FOOTER BAR */}
@@ -461,7 +487,7 @@ export default function InteractiveAgencyMap() {
                   </div>
                   <div>
                     <h4 className="text-base sm:text-lg font-black text-amber-300">
-                      {selectedHub.isCentral ? "مركز النجاح الرئيسي — " : "مدينة النجاح — "} 
+                      {selectedHub.isCentral ? "مركز النجاح الرئيسي — " : "مدينة النجاح — "}
                       {selectedHub.name} ({selectedHub.country})
                     </h4>
                     <p className="text-xs text-slate-400">تغطية الأنشطة التجارية وتصدر نتائج الخرائط</p>

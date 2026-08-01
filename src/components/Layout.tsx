@@ -8,7 +8,9 @@ export default function Layout() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    trackVisit(pathname);
+    // Best-effort visit tracking; ignore the result so an unmounted component
+    // never tries to setState.
+    trackVisit(pathname).catch(() => {});
   }, [pathname]);
 
   return (

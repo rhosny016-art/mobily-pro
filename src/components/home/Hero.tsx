@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { Search, Phone, ArrowLeft, Star, TrendingUp, PhoneCall, Sparkles } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Search, Phone, ArrowLeft, Star, TrendingUp, PhoneCall } from "lucide-react";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
 import heroIslandImg from "@/assets/images/hero_floating_island_new_1784909813154.jpg";
 
@@ -10,8 +9,12 @@ const SEARCH_SUGGESTIONS = [
   "أشهر مطعم وتجارة إلكترونية...",
   "أفضل خدمات فندقية وسياحية...",
   "صيدلية وخدمات تعمل 24 ساعة...",
-  "مكتب استشارات وتقنية متكامل..."
-];
+  "مكتب استشارات وتقنية متكمل..."
+] as const;
+
+// Static CTA targets — built once, reused across all hero buttons.
+const HERO_CTA_HREF = buildWhatsAppLink("مرحباً، أريد حجز استشارة مجانية 🙏");
+const INLINE_CTA_HREF = buildWhatsAppLink("مرحباً، أريد حجز استشارة مجانية 🙏");
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -22,16 +25,35 @@ const fadeUp = {
   }),
 };
 
-export default function Hero() {
+/** Cycling search-suggestion text. Kept as its own component so its 3.5s
+ *  interval setState only re-renders this small chip, not the whole Hero. */
+function CyclingSearchSuggestion() {
   const [searchIndex, setSearchIndex] = useState(0);
-
   useEffect(() => {
     const timer = setInterval(() => {
       setSearchIndex((prev) => (prev + 1) % SEARCH_SUGGESTIONS.length);
     }, 3500);
     return () => clearInterval(timer);
   }, []);
+  return (
+    <div className="relative h-5 overflow-hidden flex items-center">
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={searchIndex}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.35 }}
+          className="text-xs font-bold text-slate-700 whitespace-nowrap"
+        >
+          {SEARCH_SUGGESTIONS[searchIndex]}
+        </motion.span>
+      </AnimatePresence>
+    </div>
+  );
+}
 
+export default function Hero() {
   return (
     <section
       id="hero"
@@ -40,7 +62,7 @@ export default function Hero() {
     >
       {/* Blueprint Grid Pattern Background */}
       <div
-        className="absolute inset-0 opacity-[0.22] pointer-events-none"
+        className="absolute inset-0 opacity-[0.22] pointer-events-none gpu"
         style={{
           backgroundImage: `
             linear-gradient(#CBD5E1 1px, transparent 1px),
@@ -51,12 +73,12 @@ export default function Hero() {
         aria-hidden="true"
       />
 
-      {/* Studio Radial Soft Light Glows */}
-      <div className="absolute top-1/4 right-1/4 w-[650px] h-[650px] rounded-full bg-amber-400/15 blur-[150px] pointer-events-none animate-pulse" />
+      {/* Studio Radial Soft Light Glows — static blur, no animate-pulse to spare the GPU. */}
+      <div className="absolute top-1/4 right-1/4 w-[650px] h-[650px] rounded-full bg-amber-400/15 blur-[150px] pointer-events-none" />
       <div className="absolute top-1/3 left-1/4 w-[550px] h-[550px] rounded-full bg-blue-600/12 blur-[150px] pointer-events-none" />
 
       <div className="relative max-w-7xl mx-auto px-4 lg:px-8 grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
-        
+
         {/* RIGHT COLUMN (RTL): Headline, Badge, Description, CTA Buttons */}
         <div className="order-1 text-right w-full">
           {/* Top Badge */}
@@ -125,7 +147,7 @@ export default function Hero() {
             {/* Main Orange/Gold Pill CTA */}
             <a
               id="hero-whatsapp-btn"
-              href={buildWhatsAppLink("مرحباً، أريد حجز استشارة مجانية 🙏")}
+              href={HERO_CTA_HREF}
               target="_blank"
               rel="noopener noreferrer"
               className="relative group overflow-hidden inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full font-bold text-white text-sm sm:text-base bg-gradient-to-r from-[#F59E0B] via-[#EAB308] to-[#EA580C] hover:from-[#EA580C] hover:to-[#D97706] shadow-[0_10px_25px_rgba(245,158,11,0.35)] hover:shadow-[0_15px_35px_rgba(245,158,11,0.5)] transition-all duration-300 hover:scale-105 active:scale-95"
@@ -159,23 +181,10 @@ export default function Hero() {
                 <div className="w-8.5 h-8.5 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-400 text-white flex items-center justify-center shrink-0 shadow-sm">
                   <Search className="w-4 h-4" />
                 </div>
-                <div className="relative h-5 overflow-hidden flex items-center">
-                  <AnimatePresence mode="wait">
-                    <motion.span
-                      key={searchIndex}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.35 }}
-                      className="text-xs font-bold text-slate-700 whitespace-nowrap"
-                    >
-                      {SEARCH_SUGGESTIONS[searchIndex]}
-                    </motion.span>
-                  </AnimatePresence>
-                </div>
+                <CyclingSearchSuggestion />
               </div>
               <a
-                href={buildWhatsAppLink("مرحباً، أريد حجز استشارة مجانية 🙏")}
+                href={INLINE_CTA_HREF}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-amber-500/10 hover:bg-amber-500/20 text-amber-800 font-extrabold text-[11px] px-3.5 py-1.5 rounded-xl whitespace-nowrap transition-colors shrink-0"
@@ -187,18 +196,16 @@ export default function Hero() {
             {/* Widget 2: Ratings Badge */}
             <div className="bg-white/90 backdrop-blur-md blur-gpu border border-slate-200/90 rounded-2xl p-2.5 sm:p-3 shadow-md flex items-center gap-3 shrink-0">
               <div className="flex flex-col items-center">
-                <div className="flex items-center gap-0.5 text-amber-500">
-                  <Star className="w-3.5 h-3.5 fill-amber-500" />
-                  <Star className="w-3.5 h-3.5 fill-amber-500" />
-                  <Star className="w-3.5 h-3.5 fill-amber-500" />
-                  <Star className="w-3.5 h-3.5 fill-amber-500" />
-                  <Star className="w-3.5 h-3.5 fill-amber-500" />
+                <div className="flex items-center gap-0.5 text-amber-500" aria-hidden="true">
+                  {Array.from({ length: 5 }, (_, i) => (
+                    <Star key={i} className="w-3.5 h-3.5 fill-amber-500" />
+                  ))}
                 </div>
                 <span className="text-[10px] font-black text-slate-800 mt-0.5">
                   الـ 20k+ مراجعة
                 </span>
               </div>
-              
+
               {/* User Avatars Stack */}
               <div className="flex items-center -space-x-2 space-x-reverse">
                 <div className="w-7 h-7 rounded-full bg-blue-600 text-white text-[10px] font-black flex items-center justify-center ring-2 ring-white">
@@ -220,7 +227,7 @@ export default function Hero() {
 
         {/* LEFT COLUMN (RTL): 3D Floating Island & Overlay Cards */}
         <div className="order-2 w-full relative flex items-center justify-center overflow-hidden px-2 sm:px-0">
-          
+
           {/* Main Floating Island Container */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -238,18 +245,8 @@ export default function Hero() {
               {/* Solid 3D Ambient Base Aura */}
               <div className="absolute inset-6 rounded-full bg-gradient-to-tr from-amber-500/20 via-cyan-500/15 to-blue-600/20 blur-xl pointer-events-none transform opacity-80" />
 
-              {/* Solid 3D Floating Citadel Wrapper */}
-              <motion.div
-                className="w-full h-full relative flex items-center justify-center z-10"
-                animate={{
-                  y: [0, -6, 0],
-                }}
-                transition={{
-                  duration: 5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              >
+              {/* Solid 3D Floating Citadel Wrapper — CSS float (no JS frames), lighter than framer infinite y */}
+              <div className="w-full h-full relative flex items-center justify-center z-10 animate-float">
                 {/* 3D Solid Island Image — above the fold, so eager + high priority for best LCP */}
                 <img
                   src={heroIslandImg}
@@ -263,7 +260,7 @@ export default function Hero() {
                   className="w-full h-full object-contain filter contrast-[1.08] brightness-[1.02] drop-shadow-[0_15px_30px_rgba(15,23,42,0.3)] select-none transition-all duration-300 rounded-2xl"
                   referrerPolicy="no-referrer"
                 />
-              </motion.div>
+              </div>
             </div>
 
             {/* GLASS CARD 1: Top-Left +300% Growth Badge */}
@@ -323,4 +320,3 @@ export default function Hero() {
     </section>
   );
 }
-

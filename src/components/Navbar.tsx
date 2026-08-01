@@ -12,9 +12,13 @@ const LINKS = [
   { href: "#network", label: "شبكتنا", id: "network" },
   { href: "#reviews", label: "آراء العملاء", id: "reviews" },
   { href: "#faq", label: "الأسئلة الشائعة", id: "faq" },
-];
+] as const;
 
 const SECTION_IDS = LINKS.map((l) => l.id);
+
+/** WhatsApp CTA link is identical wherever it appears in the navbar/sidebar —
+ *  compute it once at module load so we never rebuild the URL on each render. */
+const CTA_HREF = buildWhatsAppLink("مرحباً، أريد استشارة مجانية 🙏");
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -23,8 +27,8 @@ export default function Navbar() {
   const [activeSection, setActiveSection] = useState("hero");
   const { pathname } = useLocation();
 
-  // Keep latest `open` inside a ref so the scroll handler subscription is stable
-  // and does not need to be re-created on every menu toggle.
+  // Keep latest `open` inside a ref so the scroll handler subscription stays
+  // stable and never needs to be recreated on every menu toggle.
   const openRef = useRef(open);
   useEffect(() => {
     openRef.current = open;
@@ -41,18 +45,18 @@ export default function Navbar() {
         ticking = false;
         const currentScrollY = window.scrollY;
 
-        // Visibility: only update state when the value actually changes.
+        // Visibility — only flip state when the value actually changes, so the
+        // header doesn't re-render on every pixel of scroll.
         if (!openRef.current && currentScrollY > 80) {
           const shouldHide = currentScrollY > lastScrollY;
-          setVisible((v) => (v === !shouldHide ? !shouldHide : v));
+          setVisible((v) => (v === shouldHide ? v : !shouldHide));
         } else {
-          setVisible((v) => (v === false ? true : v));
+          setVisible((v) => (v ? v : true));
         }
 
-        setScrolled((s) => (s !== currentScrollY > 20 ? currentScrollY > 20 : s));
-        lastScrollY = currentScrollY;
+        setScrolled(currentScrollY > 20);
 
-        // Section highlight: early exit once a match is found.
+        // Section highlight — bail on the first hit instead of scanning all 6.
         for (const sectionId of SECTION_IDS) {
           const el = document.getElementById(sectionId);
           if (el) {
@@ -63,6 +67,8 @@ export default function Navbar() {
             }
           }
         }
+
+        lastScrollY = currentScrollY;
       });
     };
 
@@ -73,27 +79,25 @@ export default function Navbar() {
 
   useEffect(() => setOpen(false), [pathname]);
 
+  // Lock body scroll while the mobile drawer is open; restore on close/unmount.
   useEffect(() => {
     if (open) {
+      const prev = document.body.style.overflow;
       document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
+      return () => {
+        document.body.style.overflow = prev;
+      };
     }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
   }, [open]);
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    if (pathname === "/") {
-      if (href.startsWith("#")) {
-        e.preventDefault();
-        const targetId = href.replace("#", "");
-        const element = document.getElementById(targetId);
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth" });
-          setActiveSection(targetId);
-        }
+    if (pathname === "/" && href.startsWith("#")) {
+      e.preventDefault();
+      const targetId = href.replace("#", "");
+      const element = document.getElementById(targetId);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+        setActiveSection(targetId);
       }
     }
     setOpen(false);
@@ -137,7 +141,7 @@ export default function Navbar() {
           {/* Left Side: Golden Orange CTA */}
           <div className="hidden lg:flex items-center gap-3">
             <a
-              href={buildWhatsAppLink("مرحباً، أريد استشارة مجانية 🙏")}
+              href={CTA_HREF}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs md:text-sm text-white bg-gradient-to-r from-[#F59E0B] via-[#EAB308] to-[#EA580C] hover:from-[#EA580C] hover:to-[#D97706] shadow-[0_4px_16px_rgba(245,158,11,0.35)] transition-all duration-200 hover:scale-105 active:scale-95"
@@ -267,7 +271,7 @@ export default function Navbar() {
 
               <div className="border-t border-slate-100 bg-gradient-to-b from-slate-50/80 to-slate-100/90 px-4 py-4 sm:px-5">
                 <a
-                  href={buildWhatsAppLink("مرحباً، أريد استشارة مجانية 🙏")}
+                  href={CTA_HREF}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#F59E0B] via-[#EAB308] to-[#EA580C] px-4 py-3.5 text-sm font-extrabold text-white shadow-md shadow-amber-500/20 transition-all hover:from-[#EA580C] hover:to-[#D97706] active:scale-[0.98]"
@@ -283,5 +287,3 @@ export default function Navbar() {
     </header>
   );
 }
-
-

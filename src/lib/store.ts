@@ -49,7 +49,7 @@ export interface FirestoreErrorInfo {
 export function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
   const errMsg = error instanceof Error ? error.message : String(error);
   const isOffline = errMsg.includes("client is offline") || errMsg.includes("unavailable");
-  
+
   const errInfo: FirestoreErrorInfo = {
     error: errMsg,
     authInfo: {
@@ -72,7 +72,7 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
   } else {
     console.warn('Firestore offline notice for path:', path);
   }
-  
+
   throw new Error(JSON.stringify(errInfo));
 }
 
@@ -86,7 +86,7 @@ export const ALLOWED_EMAILS: string[] = (import.meta.env.VITE_ADMIN_EMAILS || "a
 export const ADMIN_PASSWORD: string = import.meta.env.VITE_ADMIN_PASSWORD || "";
 
 // ---------- Settings ----------
-// Promise memoization: concurrent callers share one in-flight request, and a
+// Promise + TTL cache. Concurrent callers share one in-flight request, and the
 // short-lived cache avoids redundant network round-trips across re-mounts.
 const CACHE_TTL = 30_000;
 let settingsPromise: Promise<SiteSettings> | null = null;

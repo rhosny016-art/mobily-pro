@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import Logo from "./Logo";
 import { getSiteSettings } from "@/lib/store";
-import { DEFAULT_SETTINGS } from "@/lib/siteData";
+import { DEFAULT_SETTINGS, type SiteSettings } from "@/lib/siteData";
 
 const FacebookIcon = ({ className = "w-4.5 h-4.5" }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -28,7 +28,7 @@ const QUICK_LINKS = [
   { to: "/services", label: "الخدمات" },
   { to: "/blog", label: "المدونة" },
   { to: "/about", label: "من نحن" },
-];
+] as const;
 
 const SERVICE_LINKS = [
   "إنشاء نشاط على خرائط Google",
@@ -36,31 +36,41 @@ const SERVICE_LINKS = [
   "حملات Google Ads",
   "إعلانات وسائل التواصل",
   "كتابة التعليقات والمراجعات",
-];
+] as const;
+
+/** Map a settings social field to its icon — built once when settings arrive. */
+const SOCIALS = [
+  { key: "social_facebook", Icon: FacebookIcon, label: "فيسبوك" },
+  { key: "social_instagram", Icon: InstagramIcon, label: "إنستجرام" },
+  { key: "social_linkedin", Icon: LinkedinIcon, label: "لينكدإن" },
+] as const;
 
 export default function Footer() {
-  const [s, setS] = useState(DEFAULT_SETTINGS);
+  const [s, setS] = useState<SiteSettings>(DEFAULT_SETTINGS);
   useEffect(() => {
-    getSiteSettings().then(setS);
+    let active = true;
+    getSiteSettings().then((data) => {
+      if (active) setS(data);
+    });
+    return () => {
+      active = false;
+    };
   }, []);
+
   return (
     <footer className="bg-[#060B24] text-white/80 border-t border-white/5 relative overflow-hidden">
       {/* توهج خلفي ناعم جداً */}
       <div className="absolute bottom-0 right-0 w-80 h-80 rounded-full bg-blue-500/5 blur-[120px] pointer-events-none" />
-      
+
       <div className="relative max-w-7xl mx-auto px-4 lg:px-8 py-12 md:py-16 grid gap-12 md:grid-cols-2 lg:grid-cols-4">
         <div>
           <Logo light animated={false} />
           <p className="mt-5 text-sm leading-relaxed text-gray-400 font-medium">{s.footer_text}</p>
           <div className="flex gap-3 mt-6">
-            {[
-              { href: s.social_facebook, Icon: FacebookIcon, label: "فيسبوك" },
-              { href: s.social_instagram, Icon: InstagramIcon, label: "إنستجرام" },
-              { href: s.social_linkedin, Icon: LinkedinIcon, label: "لينكدإن" },
-            ].map(({ href, Icon, label }) => (
+            {SOCIALS.map(({ key, Icon, label }) => (
               <a
                 key={label}
-                href={href}
+                href={s[key]}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={label}

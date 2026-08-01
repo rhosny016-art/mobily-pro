@@ -6,6 +6,18 @@ import WhatsAppButton from "@/components/WhatsAppButton";
 import LazyImage from "@/components/LazyImage";
 import { TESTIMONIALS } from "@/lib/siteData";
 
+// Single inline quote-mark SVG keeps each testimonial card self-contained
+// without shipping an extra icon asset.
+function QuoteMark() {
+  return (
+    <div className="absolute top-6 left-6 text-blue-500/10 pointer-events-none" aria-hidden="true">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+      </svg>
+    </div>
+  );
+}
+
 export function TestimonialsSection() {
   return (
     <section
@@ -37,15 +49,10 @@ export function TestimonialsSection() {
               className="relative bg-white rounded-[24px] border border-gray-100 p-6 sm:p-8 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
               dir="rtl"
             >
-              {/* أيقونة اقتباس أنيقة — SVG واحدة فقط لكل بطاقة */}
-              <div className="absolute top-6 left-6 text-blue-500/10 pointer-events-none" aria-hidden="true">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                </svg>
-              </div>
+              <QuoteMark />
 
               <div>
-                {/* نجوم التقييم — CSS بدل 5 عناصر span منفصلة */}
+                {/* نجوم التقييم — نص بدل 5 عناصر span منفصلة */}
                 <div className="flex gap-1 mb-5" aria-label="تقييم 5 نجوم">
                   <span className="text-amber-400 text-base leading-none">★★★★★</span>
                 </div>
@@ -79,26 +86,26 @@ export function TestimonialsSection() {
   );
 }
 
-export function FAQSection() {
-  const faqs = [
-    {
-      q: "كيف تساعد وكالة دلّني النشاط التجاري على تصدر نتائج الخرائط؟",
-      a: "نقوم بتهيئة وتوثيق حساب Google Business Profile بالكامل، وتحسين الكلمات المفتاحية المحلية، وإدارة التقييمات، وبناء إشارات مرجعية حقيقية تجعل نشاطك يظهر ضمن الثلاثة الكبار (Local Pack)."
-    },
-    {
-      q: "كم من الوقت يستغرق ظهور النتائج الأولى على الخريطة؟",
-      a: "تظهر التحسينات الأولية عادةً خلال أول 14 إلى 30 يوماً من بدء العمل، وتتصاعد نتائج الترتيب والمكالمات بشكل ملحوظ مع الاستمرار."
-    },
-    {
-      q: "هل خدماتكم تشمل الحملات الإعلانية المأجورة؟",
-      a: "نعم، نقدم حملات إعلانية مستهدفة ومحسّنة عبر Google Ads، Meta (Instagram & Facebook)، TikTok، وSnapchat لتحقيق أعلى عائد على الاستثمار."
-    },
-    {
-      q: "هل الاستشارة ومراجعة الملف مجانية؟",
-      a: "بالتأكيد، الاستشارة الأولى مجانية بالكامل ونقدم خلالها تقريراً شاملاً عن حالة نشاطك التجاري ونقاط القوة والفرص المتاحة."
-    }
-  ];
+const FAQS = [
+  {
+    q: "كيف تساعد وكالة دلّني النشاط التجاري على تصدر نتائج الخرائط؟",
+    a: "نقوم بتهيئة وتوثيق حساب Google Business Profile بالكامل، وتحسين الكلمات المفتاحية المحلية، وإدارة التقييمات، وبناء إشارات مرجعية حقيقية تجعل نشاطك يظهر ضمن الثلاثة الكبار (Local Pack)."
+  },
+  {
+    q: "كم من الوقت يستغرق ظهور النتائج الأولى على الخريطة؟",
+    a: "تظهر التحسينات الأولية عادةً خلال أول 14 إلى 30 يوماً من بدء العمل، وتتصاعد نتائج الترتيب والمكالمات بشكل ملحوظ مع الاستمرار."
+  },
+  {
+    q: "هل خدماتكم تشمل الحملات الإعلانية المأجورة؟",
+    a: "نعم، نقدم حملات إعلانية مستهدفة ومحسّنة عبر Google Ads، Meta (Instagram & Facebook)، TikTok، وSnapchat لتحقيق أعلى عائد على الاستثمار."
+  },
+  {
+    q: "هل الاستشارة ومراجعة الملف مجانية؟",
+    a: "بالتأكيد، الاستشارة الأولى مجانية بالكامل ونقدم خلالها تقريراً شاملاً عن حالة نشاطك التجاري ونقاط القوة والفرص المتاحة."
+  }
+] as const;
 
+export function FAQSection() {
   return (
     <section id="faq" className="relative scroll-mt-24 py-14 md:py-24 bg-white overflow-hidden" dir="rtl">
       <div className="relative max-w-4xl mx-auto px-4 lg:px-8">
@@ -109,7 +116,7 @@ export function FAQSection() {
         />
 
         <div className="mt-8 space-y-4">
-          {faqs.map((faq, i) => (
+          {FAQS.map((faq, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 15 }}
@@ -135,7 +142,7 @@ export function FAQSection() {
 
 export function CTASection() {
   return (
-    <section 
+    <section
       className="relative py-14 md:py-28 overflow-hidden text-white"
       style={{
         background: "radial-gradient(circle at 50% 50%, #111B47 0%, #060B24 100%)"
@@ -174,7 +181,7 @@ export function CTASection() {
         >
           هل أنت مستعد لتحويل حضورك الرقمي؟
         </motion.h2>
-        
+
         <motion.p
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -184,7 +191,7 @@ export function CTASection() {
         >
           انضم إلى أكثر من 250 شريك نجاح اختاروا النمو الحقيقي والمستدام معنا. استشارتك الأولى ومراجعة ملفك مجانية بالكامل.
         </motion.p>
-        
+
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -195,7 +202,7 @@ export function CTASection() {
           <WhatsAppButton size="lg" className="shadow-[0_10px_30px_rgba(37,211,102,0.3)] hover:shadow-[0_15px_40px_rgba(37,211,102,0.5)] transition-all">
             ابدأ محادثة واستشرنا مجاناً
           </WhatsAppButton>
-          
+
           <Link
             to="/services"
             className="inline-flex items-center gap-2 border border-white/10 hover:border-white/20 text-white/90 bg-white/5 hover:bg-white/10 px-8 py-4.5 rounded-xl font-bold text-base transition-all duration-300"
