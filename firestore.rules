@@ -1,0 +1,36 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Check if the user is authenticated and is the admin email
+    function isAdmin() {
+      return request.auth != null && 
+        (request.auth.token.email == "abdo01552877302@gmail.com" || request.auth.token.email == "bbd6544@gmail.com");
+    }
+
+    // Site Settings
+    match /site_settings/{settingsId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Service Overrides
+    match /service_overrides/{overrideId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Contact Requests
+    match /contact_requests/{requestId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Visits
+    match /visits/{visitId} {
+      allow create: if true;
+      allow read: if isAdmin();
+      allow update, delete: if false;
+    }
+  }
+}
