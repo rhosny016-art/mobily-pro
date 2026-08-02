@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Calendar, User } from "lucide-react";
+import PageHero from "@/components/PageHero";
 import LazyImage from "@/components/LazyImage";
 import { BLOG_CATEGORIES, BLOG_POSTS } from "@/lib/siteData";
 
@@ -15,37 +16,25 @@ export default function Blog() {
 
   return (
     <>
-      <section className="relative gradient-hero pt-28 pb-16 md:pt-36 md:pb-24 overflow-hidden">
-        <div className="absolute top-10 right-1/4 w-80 h-80 rounded-full bg-primary/30 blur-3xl" aria-hidden="true" />
-        <div className="relative max-w-4xl mx-auto px-4 text-center">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-5xl font-black text-white"
-          >
-            مدونتنا
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="mt-5 text-lg text-white/70"
-          >
-            نصائح وأفكار حول التسويق الرقمي والظهور المحلي — من خبرتنا العملية إليك مباشرة.
-          </motion.p>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="المدونة"
+        title="أفكار ورؤى من خبرتنا"
+        subtitle="نصائح وأفكار حول التسويق الرقمي والظهور المحلي — من خبرتنا العملية إليك مباشرة."
+      />
 
-      <section className="py-12 md:py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 lg:px-8">
+      <section className="relative py-12 md:py-16 bg-white overflow-hidden">
+        <div className="absolute top-0 left-1/4 w-[300px] h-[300px] rounded-full bg-blue-500/5 blur-[100px] pointer-events-none" aria-hidden="true" />
+        <div className="relative max-w-7xl mx-auto px-4 lg:px-8">
           {/* الفلاتر */}
           <div className="flex flex-wrap justify-center gap-3 mb-12">
             {BLOG_CATEGORIES.map((c) => (
               <button
                 key={c}
                 onClick={() => setCategory(c)}
-                className={`px-5 py-2.5 rounded-full text-sm font-bold transition ${
-                  category === c ? "gradient-primary text-white shadow-lg shadow-primary/25" : "bg-muted text-foreground/70 hover:bg-primary/10 hover:text-primary"
+                className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 ${
+                  category === c
+                    ? "bg-gradient-to-r from-[#0066CC] to-[#1E40AF] text-white shadow-lg shadow-blue-500/25"
+                    : "bg-slate-50 text-slate-600 hover:bg-blue-50 hover:text-blue-700 border border-slate-100"
                 }`}
               >
                 {c}
@@ -62,7 +51,7 @@ export default function Blog() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.1 }}
                 transition={{ delay: i * 0.08, duration: 0.5 }}
-                className="group bg-white rounded-2xl border border-border overflow-hidden shadow-sm hover:shadow-xl transition-shadow"
+                className="group relative bg-white rounded-[24px] border border-slate-100 overflow-hidden shadow-sm hover:shadow-xl hover:border-blue-100 transition-all duration-300"
               >
                 <Link to={`/blog/${post.slug}`} className="block">
                   <div className="relative overflow-hidden h-52">
@@ -72,12 +61,14 @@ export default function Blog() {
                       wrapperClassName="w-full h-full bg-slate-100 transition-transform duration-500 group-hover:scale-105"
                       className="w-full h-full object-cover"
                     />
-                    <span className="absolute top-4 right-4 bg-white/95 text-primary text-xs font-bold px-3 py-1.5 rounded-full z-10">
+                    {/* Overlay gradient for depth */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/30 via-transparent to-transparent pointer-events-none" />
+                    <span className="absolute top-4 right-4 bg-white/95 text-blue-700 text-xs font-bold px-3 py-1.5 rounded-full shadow-sm backdrop-blur-sm z-10">
                       {post.category}
                     </span>
                   </div>
                   <div className="p-5 sm:p-6">
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground mb-3">
+                    <div className="flex items-center gap-4 text-xs text-slate-400 mb-3">
                       <span className="flex items-center gap-1.5">
                         <Calendar className="w-3.5 h-3.5" aria-hidden="true" />
                         {formatDate(post.published_date)}
@@ -87,9 +78,9 @@ export default function Blog() {
                         {post.author}
                       </span>
                     </div>
-                    <h2 className="text-lg font-extrabold leading-snug group-hover:text-primary transition">{post.title}</h2>
-                    <p className="mt-3 text-sm text-muted-foreground leading-relaxed line-clamp-2">{post.excerpt}</p>
-                    <span className="inline-flex items-center gap-1.5 mt-4 text-primary font-bold text-sm group-hover:gap-2.5 transition-all">
+                    <h2 className="text-lg font-extrabold leading-snug text-slate-900 group-hover:text-blue-600 transition-colors duration-200">{post.title}</h2>
+                    <p className="mt-3 text-sm text-slate-500 leading-relaxed line-clamp-2">{post.excerpt}</p>
+                    <span className="inline-flex items-center gap-1.5 mt-4 text-blue-600 font-bold text-sm group-hover:gap-2.5 transition-all">
                       اقرأ المزيد
                       <ArrowLeft className="w-4 h-4" aria-hidden="true" />
                     </span>

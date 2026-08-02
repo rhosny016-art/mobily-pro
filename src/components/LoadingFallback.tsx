@@ -36,7 +36,7 @@ export default function LoadingFallback({ message = "جاري تحميل الص�
         </div>
 
         {/* Loading text */}
-        <h3 className="text-lg font-black text-slate-850 tracking-tight mb-2">
+        <h3 className="text-lg font-black text-slate-800 tracking-tight mb-2">
           {message}
         </h3>
 
