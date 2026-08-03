@@ -2,30 +2,74 @@
 <html lang="ar" dir="rtl">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="دلّني - وكالة تسويق رقمي متكاملة. إنشاء وتحسين خرائط Google، إدارة حملات إعلانية، وكتابة التعليقات والمراجعات." />
-    <meta name="keywords" content="تسويق رقمي, خرائط جوجل, Google Maps, Google Ads, إعلانات, مصر" />
-    <meta name="theme-color" content="#060B24" />
-    <meta property="og:title" content="دلّني | وكالة تسويق رقمي متكاملة" />
-    <meta property="og:description" content="نضع عملك على خريطة Google - خدمات تسويق رقمي احترافية" />
-    <meta property="og:type" content="website" />
-    <title>دلّني | وكالة تسويق رقمي متكاملة</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
 
-    <!-- Fonts: preconnect + async load (non render-blocking).
-         Cairo weights only (400/700/900), font-display swap, system fallback stack
-         prevents invisible-text (FOIT) and layout shift before the webfont lands. -->
+    <!-- Primary SEO -->
+    <title>دلّني | وكالة تسويق رقمي متكاملة — خرائط Google وحملات إعلانية</title>
+    <meta
+      name="description"
+      content="دلّني — وكالة تسويق رقمي متكاملة. نضع نشاطك التجاري على خريطة Google: إنشاء وتوثيق الملفات، تحسين الظهور المحلي (Local SEO)، إدارة حملات Google Ads و Meta و TikTok، وكتابة المراجعات الاحترافية."
+    />
+    <meta
+      name="keywords"
+      content="تسويق رقمي, وكالة تسويق, خرائط جوجل, Google Maps, Google Business Profile, Local SEO, Google Ads, إعلانات, تيك توك, انستجرام, مصر, السعودية, الخليج"
+    />
+    <meta name="author" content="وكالة دلّني" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="theme-color" content="#060B24" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#EEF2F7" media="(prefers-color-scheme: light)" />
+    <link rel="canonical" href="https://dalni.agency/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="دلّني" />
+    <meta property="og:locale" content="ar_AR" />
+    <meta property="og:title" content="دلّني | وكالة تسويق رقمي متكاملة" />
+    <meta
+      property="og:description"
+      content="نضع عملك على خريطة Google — خدمات تسويق رقمي احترافية تتصدر نتائج البحث المحلي وتجلب عملاء حقيقيين."
+    />
+    <meta property="og:url" content="https://dalni.agency/" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="دلّني | وكالة تسويق رقمي متكاملة" />
+    <meta name="twitter:description" content="نضع عملك على خريطة Google — خدمات تسويق رقمي احترافية." />
+
+    <!-- Fonts: preconnect + async (non render-blocking).
+         Cairo weights only (400/500/600/700/800/900), font-display swap, with a tuned
+         system fallback stack that prevents FOIT and layout shift before the webfont lands. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
     <link
       rel="preload"
       as="style"
-      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap"
       onload="this.onload=null;this.rel='stylesheet'"
     />
     <noscript>
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" />
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" />
     </noscript>
+
+    <!-- Structured data: Organization + Professional Service -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "ProfessionalService",
+        "name": "دلّني",
+        "alternateName": "Dalni",
+        "description": "وكالة تسويق رقمي متكاملة متخصصة في خرائط Google والحملات الإعلانية.",
+        "url": "https://dalni.agency",
+        "telephone": "+201554671424",
+        "email": "hello@dalni.agency",
+        "areaServed": ["EG", "SA", "AE", "KW", "JO", "IQ", "MA", "TN", "TR", "GB", "DE", "US", "MY"],
+        "priceRange": "$$",
+        "sameAs": ["https://facebook.com", "https://instagram.com", "https://linkedin.com"]
+      }
+    </script>
+
     <style>
       /* Render the brand text immediately with the closest system fallback so the
          hero headline paints before the webfont arrives (anti-FOUC). */
@@ -33,6 +77,18 @@
       html, body { font-family: var(--dalni-fallback); }
       /* Pre-paint the page background to avoid a white flash before the bundle boots. */
       body { background: #EEF2F7; }
+
+      /* Critical no-flash: keep #root non-empty visually until React mounts by
+         painting a subtle ambient backdrop. Removed once the app renders. */
+      #root:empty::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background:
+          radial-gradient(60% 50% at 70% 20%, rgba(245, 158, 11, 0.10), transparent 60%),
+          radial-gradient(55% 45% at 25% 30%, rgba(37, 99, 235, 0.10), transparent 60%),
+          #EEF2F7;
+      }
     </style>
   </head>
   <body>
