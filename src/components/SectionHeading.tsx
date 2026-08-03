@@ -18,9 +18,9 @@ const fadeUp = {
   }),
 };
 
-export default function SectionHeading({ id, eyebrow, title, subtitle, center = true }: Props) {
+export default function SectionHeading({ id, eyebrow, title, subtitle, light = false, center = true }: Props) {
   return (
-    <div id={id} className={`max-w-3xl ${center ? "mx-auto text-center" : ""} mb-14 relative z-10`}>
+    <div id={id} className={`max-w-3xl ${center ? "mx-auto text-center" : ""} mb-14`}>
       {eyebrow && (
         <motion.span
           variants={fadeUp}
@@ -28,7 +28,9 @@ export default function SectionHeading({ id, eyebrow, title, subtitle, center = 
           whileInView="visible"
           viewport={{ once: true, amount: 0.1 }}
           custom={0}
-          className="inline-flex items-center justify-center px-5 py-2 rounded-full text-sm font-bold mb-6 glass-card text-blue-300 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]"
+          className={`inline-block px-4 py-1.5 rounded-full text-sm font-semibold mb-4 ${
+            light ? "glass-card text-white" : "bg-primary/10 text-primary"
+          }`}
         >
           {eyebrow}
         </motion.span>
@@ -39,7 +41,7 @@ export default function SectionHeading({ id, eyebrow, title, subtitle, center = 
         whileInView="visible"
         viewport={{ once: true, amount: 0.1 }}
         custom={1}
-        className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-white drop-shadow-xl"
+        className={`text-3xl md:text-4xl font-extrabold leading-tight ${light ? "text-white" : "text-foreground"}`}
       >
         {title}
       </motion.h2>
@@ -50,7 +52,7 @@ export default function SectionHeading({ id, eyebrow, title, subtitle, center = 
           whileInView="visible"
           viewport={{ once: true, amount: 0.1 }}
           custom={2}
-          className="mt-6 text-lg md:text-xl font-medium leading-[1.8] text-gray-400 max-w-2xl mx-auto"
+          className={`mt-4 text-lg leading-relaxed ${light ? "text-white/70" : "text-muted-foreground"}`}
         >
           {subtitle}
         </motion.p>

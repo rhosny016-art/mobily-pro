@@ -48,8 +48,8 @@ export default function Services() {
       {/* شبكة الخدمات */}
       <section className="py-12 md:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 lg:px-8 grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {services.map((s) => (
-            <ServiceCard key={s.id} service={s} />
+          {services.map((s, i) => (
+            <ServiceCard key={s.id} service={s} index={i} />
           ))}
         </div>
       </section>
@@ -83,7 +83,7 @@ export default function Services() {
                   ))}
                 </ul>
                 <div className="pt-2">
-                  <WhatsAppButton serviceTitle={s.title}>طلب الخدمة عبر واتساب</WhatsAppButton>
+                  <WhatsAppButton serviceTitle={s.title} label="طلب الخدمة عبر واتساب" />
                 </div>
               </div>
 

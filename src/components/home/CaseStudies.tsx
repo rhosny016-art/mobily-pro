@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Quote, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Quote } from "lucide-react";
 import SectionHeading from "@/components/SectionHeading";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import LazyImage from "@/components/LazyImage";
@@ -8,62 +8,65 @@ import { TESTIMONIALS } from "@/lib/siteData";
 
 export function TestimonialsSection() {
   return (
-    <section id="reviews" className="relative scroll-mt-24 py-16 md:py-32 overflow-hidden">
-      {/* 3D Cosmos Background */}
-      <div className="absolute top-0 right-1/4 w-[600px] h-[600px] rounded-full bg-purple-600/10 blur-[150px] pointer-events-none mix-blend-screen" />
-      <div className="absolute bottom-0 left-1/4 w-[600px] h-[600px] rounded-full bg-blue-600/10 blur-[150px] pointer-events-none mix-blend-screen" />
+    <section id="reviews" className="relative scroll-mt-24 py-14 md:py-28 bg-slate-50/50 overflow-hidden">
+      {/* خلفية جمالية */}
+      <div className="absolute top-0 right-1/4 w-[350px] h-[350px] rounded-full bg-blue-500/5 blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-0 left-1/4 w-[350px] h-[350px] rounded-full bg-emerald-500/5 blur-[100px] pointer-events-none" />
 
-      <div className="relative max-w-7xl mx-auto px-4 lg:px-8 z-10">
+      <div className="relative max-w-7xl mx-auto px-4 lg:px-8">
         <SectionHeading
-          eyebrow="آراء العملاء"
-          title="تجارب حقيقية لشركائنا"
-          subtitle="تجارب حقيقية لشركائنا الذين حطموا الأرقام القياسية بعد تعاونهم مع دلّني."
-          light={true}
+          eyebrow="قالوا عنا"
+          title="قصص نجاح حقيقية لشركائنا"
+          subtitle="لا توجد شهادة أفضل من نجاح عملائنا؛ إليك بعض التجارب الواقعية ممن وضعوا ثقتهم في دلّني."
         />
         
-        <div className="grid md:grid-cols-3 gap-6 md:gap-8 pt-12">
-          {TESTIMONIALS.map((t) => (
-            <div
+        <div className="grid md:grid-cols-3 gap-8">
+          {TESTIMONIALS.map((t, i) => (
+            <motion.div
               key={t.name}
-              className="relative glass-card glass-card-hover rounded-[24px] p-8 flex flex-col justify-between overflow-hidden"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ delay: i * 0.1, duration: 0.5 }}
+              whileHover={{ y: -8 }}
+              className="relative bg-white rounded-[24px] border border-gray-100 p-6 sm:p-8 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
               dir="rtl"
             >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-3xl pointer-events-none" />
-              
-              <div className="absolute top-6 left-6 text-blue-500/20 pointer-events-none">
-                <Quote className="w-16 h-16 drop-shadow-md" aria-hidden="true" />
+              {/* أيقونة اقتباس أنيقة ومطورة */}
+              <div className="absolute top-6 left-6 text-blue-500/10 pointer-events-none">
+                <Quote className="w-12 h-12" aria-hidden="true" />
               </div>
 
-              <div className="relative z-10">
-                <div className="flex gap-1 mb-6">
+              <div>
+                {/* نجوم التقييم الخمسة للتأكيد على الجودة */}
+                <div className="flex gap-1 mb-5">
                   {[...Array(5)].map((_, idx) => (
-                    <span key={idx} className="text-amber-400 drop-shadow-[0_0_5px_rgba(251,191,36,0.8)]">★</span>
+                    <span key={idx} className="text-amber-400">★</span>
                   ))}
                 </div>
                 
-                <p className="text-gray-200 leading-[1.8] font-medium text-base mb-8">
+                <p className="text-gray-600 leading-relaxed font-medium text-sm">
                   "{t.message}"
                 </p>
               </div>
 
-              <div className="flex items-center gap-4 pt-6 border-t border-white/10 relative z-10">
+              <div className="flex items-center gap-4 mt-8 pt-6 border-t border-gray-50">
                 <LazyImage 
                   src={t.avatar} 
                   alt={t.name} 
-                  wrapperClassName="w-14 h-14 rounded-full overflow-hidden border-2 border-blue-500/30 ring-4 ring-blue-500/10 shrink-0 bg-gray-800"
+                  wrapperClassName="w-12 h-12 rounded-full overflow-hidden border-2 border-white ring-4 ring-blue-50/50 shrink-0 bg-slate-100"
                   className="w-full h-full object-cover" 
                 />
                 <div>
-                  <p className="font-extrabold text-base text-white flex items-center gap-1.5 drop-shadow-sm">
+                  <p className="font-extrabold text-sm text-gray-900 flex items-center gap-1.5">
                     {t.name}
-                    <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600 text-white shadow-[0_0_10px_rgba(16,185,129,0.5)]">
-                      <CheckCircle2 className="w-3 h-3" />
-                    </span>
+                    {/* شارة توثيق العميل الحقيقي */}
+                    <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-emerald-500 text-white text-[8px] font-black">✓</span>
                   </p>
-                  <p className="text-sm text-blue-300 font-bold mt-1">{t.role}</p>
+                  <p className="text-xs text-gray-400 font-bold mt-1">{t.role}</p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
@@ -92,32 +95,29 @@ export function FAQSection() {
   ];
 
   return (
-    <section id="faq" className="relative scroll-mt-24 py-16 md:py-32 overflow-hidden" dir="rtl">
-      <div className="absolute top-1/2 left-0 w-1/3 h-1/2 bg-blue-600/10 blur-[150px] pointer-events-none mix-blend-screen" />
-      
-      <div className="relative max-w-4xl mx-auto px-4 lg:px-8 z-10">
+    <section id="faq" className="relative scroll-mt-24 py-14 md:py-24 bg-white overflow-hidden" dir="rtl">
+      <div className="relative max-w-4xl mx-auto px-4 lg:px-8">
         <SectionHeading
-          eyebrow="دليلك للوضوح"
+          eyebrow="إجابات وشكوك"
           title="الأسئلة الشائعة"
-          subtitle="نجيب هنا على أبرز الاستفسارات لنضعك على بينة من كل التفاصيل قبل بدء رحلة النجاح معنا."
-          light={true}
+          subtitle="إليك أهم الأسئلة التي يطرحها شركاؤنا قبل البدء معنا"
         />
 
-        <div className="mt-12 space-y-5">
+        <div className="mt-8 space-y-4">
           {faqs.map((faq, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 15 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.5 }}
-              className="glass-card rounded-2xl p-6 sm:p-8 text-right hover:border-blue-500/30 hover:shadow-[0_0_30px_rgba(59,130,246,0.15)] transition-all duration-300"
+              transition={{ delay: i * 0.1 }}
+              className="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 sm:p-6 text-right hover:border-amber-400/50 transition-colors shadow-xs"
             >
-              <h3 className="text-lg sm:text-xl font-bold text-white mb-3 flex items-start gap-3">
-                <span className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 shrink-0 mt-2 shadow-[0_0_10px_rgba(59,130,246,0.8)]" />
+              <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
                 {faq.q}
               </h3>
-              <p className="text-base text-gray-300 font-medium leading-[1.8] pr-5">
+              <p className="text-sm text-slate-600 font-medium leading-relaxed pr-4">
                 {faq.a}
               </p>
             </motion.div>
@@ -130,61 +130,72 @@ export function FAQSection() {
 
 export function CTASection() {
   return (
-    <section className="relative py-20 md:py-32 overflow-hidden">
-      {/* Deep Cyberpunk Core Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#060b24] via-[#0b1b47] to-[#04081c]" />
-      
-      {/* 3D Glowing Energy Core */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-[100%] bg-blue-500/20 blur-[120px] pointer-events-none mix-blend-screen animate-pulse-glow" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[200px] rounded-[100%] bg-purple-500/20 blur-[80px] pointer-events-none mix-blend-screen animate-pulse-glow" style={{ animationDelay: '1s' }} />
+    <section 
+      className="relative py-14 md:py-28 overflow-hidden text-white"
+      style={{
+        background: "radial-gradient(circle at 50% 50%, #111B47 0%, #060B24 100%)"
+      }}
+    >
+      {/* توهج نيون بالمنتصف */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full bg-blue-500/10 blur-[150px] pointer-events-none" />
+      <div className="absolute top-0 right-1/4 w-96 h-96 rounded-full bg-emerald-500/5 blur-[120px] pointer-events-none" />
 
-      <div className="relative max-w-5xl mx-auto px-4 text-center z-10">
+      {/* نمط النقاط الناعمة جداً بالخلفية */}
+      <div
+        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        style={{
+          backgroundImage: "radial-gradient(#fff 1px, transparent 1px)",
+          backgroundSize: "24px 24px",
+        }}
+      />
+
+      <div className="relative max-w-4xl mx-auto px-4 text-center">
         <motion.span
-          initial={{ opacity: 0, scale: 0.8 }}
+          initial={{ opacity: 0, scale: 0.9 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="inline-block px-5 py-2 rounded-full text-sm font-black mb-8 bg-blue-500/10 text-blue-300 border border-blue-500/30 shadow-[0_0_20px_rgba(59,130,246,0.2)]"
+          transition={{ duration: 0.5 }}
+          className="inline-block px-4 py-1.5 rounded-full text-xs font-bold mb-6 bg-blue-500/10 text-blue-400 border border-blue-500/20"
         >
-          البداية من هنا
+          دعنا نضعك في المقدمة
         </motion.span>
-        
+
         <motion.h2
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-          className="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400 leading-[1.2] tracking-tight drop-shadow-2xl"
+          transition={{ duration: 0.6 }}
+          className="text-4xl md:text-5xl font-black text-white leading-[1.3] tracking-tight"
         >
-          مستعد لاختراق السوق؟
+          هل أنت مستعد لتحويل حضورك الرقمي؟
         </motion.h2>
         
         <motion.p
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: 0.15 }}
-          className="mt-8 text-xl md:text-2xl text-blue-100/80 leading-[1.8] max-w-3xl mx-auto font-medium"
+          transition={{ duration: 0.6, delay: 0.12 }}
+          className="mt-6 text-lg text-gray-300 leading-relaxed max-w-2xl mx-auto font-medium"
         >
-          نحن لا نقدم مجرد خدمات، بل نبني شراكات استراتيجية. تواصل معنا اليوم لتحصل على تقييم شامل لنشاطك، واستشارة مجانية ترسم لك خارطة الطريق نحو القمة.
+          انضم إلى أكثر من 250 شريك نجاح اختاروا النمو الحقيقي والمستدام معنا. استشارتك الأولى ومراجعة ملفك مجانية بالكامل.
         </motion.p>
         
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: 0.3 }}
-          className="mt-14 flex flex-col sm:flex-row justify-center items-center gap-6"
+          transition={{ duration: 0.6, delay: 0.24 }}
+          className="mt-10 flex flex-col sm:flex-row justify-center items-center gap-5"
         >
-          <WhatsAppButton size="lg" className="w-full sm:w-auto shadow-[0_0_40px_rgba(37,211,102,0.4)]">
-            ابدأ رحلتك واستشرنا مجاناً
+          <WhatsAppButton size="lg" className="shadow-[0_10px_30px_rgba(37,211,102,0.3)] hover:shadow-[0_15px_40px_rgba(37,211,102,0.5)] transition-all">
+            ابدأ محادثة واستشرنا مجاناً
           </WhatsAppButton>
           
           <Link
-            to="/#services"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-3 glass-card glass-card-hover px-8 py-4 rounded-xl font-bold text-lg text-white border-white/20 hover:bg-white/10"
+            to="/services"
+            className="inline-flex items-center gap-2 border border-white/10 hover:border-white/20 text-white/90 bg-white/5 hover:bg-white/10 px-8 py-4.5 rounded-xl font-bold text-base transition-all duration-300"
           >
-            اكتشف خدماتنا
+            تصفح الخدمات المتكاملة
             <ArrowLeft className="w-5 h-5" aria-hidden="true" />
           </Link>
         </motion.div>

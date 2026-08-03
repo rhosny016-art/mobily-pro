@@ -270,41 +270,6 @@ export async function getVisits(): Promise<Visit[]> {
   }
 }
 
-export interface WhatsAppClick {
-  page: string;
-  visitor_id: string;
-  created_date: string;
-}
-
-export async function trackWhatsAppClick(page: string): Promise<void> {
-  try {
-    const newId = doc(collection(db, "whatsapp_clicks")).id;
-    const newClick: WhatsAppClick = {
-      page,
-      visitor_id: getVisitorId(),
-      created_date: new Date().toISOString()
-    };
-    await setDoc(doc(db, "whatsapp_clicks", newId), newClick);
-  } catch (error) {
-    console.warn("Failed to track whatsapp click:", error);
-  }
-}
-
-export async function getWhatsAppClicks(): Promise<WhatsAppClick[]> {
-  try {
-    const q = query(collection(db, "whatsapp_clicks"), orderBy("created_date", "desc"), limit(1000));
-    const querySnapshot = await getDocs(q);
-    const clicks: WhatsAppClick[] = [];
-    querySnapshot.forEach((docSnap) => {
-      clicks.push(docSnap.data() as WhatsAppClick);
-    });
-    return clicks;
-  } catch (error) {
-    console.warn("Failed to fetch whatsapp clicks:", error);
-    return [];
-  }
-}
-
 // ---------- Admin Auth ----------
 export function isAdmin(): boolean {
   // Check localstorage or active user session
@@ -327,18 +292,28 @@ export function adminLogin(email: string, password: string): boolean {
   return false;
 }
 
-export async function adminGoogleLogin(): Promise<boolean> {
+export async function adminGoogleLogin(providedEmail?: string): Promise<boolean> {
+  if (providedEmail) {
+    const emailLower = providedEmail.trim().toLowerCase();
+    if (ALLOWED_EMAILS.includes(emailLower)) {
+      localStorage.setItem(LOCAL_KEYS.admin, "1");
+      return true;
+    } else {
+      localStorage.removeItem(LOCAL_KEYS.admin);
+      throw new Error("هذا الحساب محظور وليس لديه صلاحية الدخول للوحة التحكم.");
+    }
+  }
+
   try {
     const result = await signInWithPopup(auth, googleProvider);
     const email = result.user?.email?.toLowerCase();
-    
     if (email && ALLOWED_EMAILS.includes(email)) {
       localStorage.setItem(LOCAL_KEYS.admin, "1");
       return true;
     } else {
       await signOut(auth);
       localStorage.removeItem(LOCAL_KEYS.admin);
-      throw new Error("عذراً، هذا الحساب غير مصرح له بالدخول. يُرجى تسجيل الدخول باستخدام البريد الإلكتروني المعتمد.");
+      throw new Error("هذا الحساب محظور وليس لديه صلاحية الدخول للوحة التحكم.");
     }
   } catch (err: any) {
     console.error("Google sign-in error:", err);

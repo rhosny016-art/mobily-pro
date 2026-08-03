@@ -1,20 +1,18 @@
 import { useEffect, useState } from "react";
-import { Eye, Inbox, Loader2, Package, MessageCircle } from "lucide-react";
-import { getRequests, getServices, getVisits, getWhatsAppClicks, type ContactRequest, type Visit, type WhatsAppClick } from "@/lib/store";
+import { Eye, Inbox, Loader2, Package, TrendingUp } from "lucide-react";
+import { getRequests, getServices, getVisits, type ContactRequest, type Visit } from "@/lib/store";
 
 export default function DashboardStats() {
   const [requests, setRequests] = useState<ContactRequest[]>([]);
   const [visits, setVisits] = useState<Visit[]>([]);
-  const [whatsappClicks, setWhatsappClicks] = useState<WhatsAppClick[]>([]);
   const [services, setServices] = useState<{ id: string }[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([getRequests(), getVisits(), getServices(), getWhatsAppClicks()]).then(([r, v, s, w]) => {
+    Promise.all([getRequests(), getVisits(), getServices()]).then(([r, v, s]) => {
       setRequests(r);
       setVisits(v);
       setServices(s.filter((x) => x.visible !== false));
-      setWhatsappClicks(w);
       setLoading(false);
     });
   }, []);
@@ -27,19 +25,20 @@ export default function DashboardStats() {
     );
   }
 
+  const conversion = visits.length > 0 ? ((requests.length / visits.length) * 100).toFixed(1) : "0";
+
   // أكثر الخدمات طلباً من حقل subject
   const serviceCounts: Record<string, number> = {};
   requests.forEach((r) => {
     const m = r.subject?.match(/طلب خدمة:\s*(.+)/);
     if (m) serviceCounts[m[1]] = (serviceCounts[m[1]] || 0) + 1;
   });
-
   const topServices = Object.entries(serviceCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
 
   const cards = [
     { label: "إجمالي الطلبات", value: requests.length, Icon: Inbox, color: "bg-blue-500" },
     { label: "إجمالي الزيارات", value: visits.length, Icon: Eye, color: "bg-green-500" },
-    { label: "نقرات واتساب", value: whatsappClicks.length, Icon: MessageCircle, color: "bg-emerald-500" },
+    { label: "معدل التحويل", value: `${conversion}%`, Icon: TrendingUp, color: "bg-orange-500" },
     { label: "الخدمات المتاحة", value: services.length, Icon: Package, color: "bg-purple-500" },
   ];
 

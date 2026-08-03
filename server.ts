@@ -278,12 +278,6 @@ async function startServer() {
     }
   });
 
-  // Temporary download route for single HTML file
-  app.get('/download-html', (_req, res) => {
-    const filePath = path.join(process.cwd(), 'dist', 'index.html');
-    res.download(filePath, 'project.html');
-  });
-
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
