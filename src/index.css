@@ -1,0 +1,278 @@
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════════════════════════
+   دلّني — Design System
+   Midnight-cartography theme: deep navy canvas, electric routes,
+   luminous pins, premium gold accents.
+   ═══════════════════════════════════════════════════════════════ */
+
+@theme {
+  /* Typography */
+  --font-display: "Alexandria", "IBM Plex Sans Arabic", system-ui, sans-serif;
+  --font-sans: "IBM Plex Sans Arabic", system-ui, -apple-system, sans-serif;
+  --font-mono: "Space Grotesk", "IBM Plex Sans Arabic", monospace;
+
+  /* Canvas (deep navy blacks) */
+  --color-ink-950: #04060d;
+  --color-ink-900: #070b16;
+  --color-ink-850: #0a101f;
+  --color-ink-800: #0d1526;
+  --color-ink-700: #131e38;
+  --color-ink-600: #1b2a4d;
+  --color-ink-500: #253763;
+
+  /* Mist (text tones) */
+  --color-mist-100: #f2f5fc;
+  --color-mist-200: #e4eaf6;
+  --color-mist-300: #c6d0e6;
+  --color-mist-400: #97a4c4;
+  --color-mist-500: #68759a;
+
+  /* Electric brand blue */
+  --color-brand-300: #7fb0ff;
+  --color-brand-400: #4d8dff;
+  --color-brand-500: #2e6bff;
+  --color-brand-600: #1f52e0;
+  --color-brand-700: #1a42b8;
+
+  /* Cyan route */
+  --color-route-300: #67e8f9;
+  --color-route-400: #22d3ee;
+  --color-route-500: #06b6d4;
+
+  /* Violet aurora */
+  --color-aurora-400: #a78bfa;
+  --color-aurora-500: #8b5cf6;
+  --color-aurora-600: #7c3aed;
+
+  /* Premium gold */
+  --color-gold-200: #ffedc2;
+  --color-gold-300: #f8d68a;
+  --color-gold-400: #edba5e;
+  --color-gold-500: #dda03c;
+  --color-gold-600: #c1812a;
+
+  /* Status */
+  --color-whatsapp: #25d366;
+  --color-whatsapp-deep: #16a34a;
+
+  /* Motion */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Shadows */
+  --shadow-glow-brand: 0 0 40px -8px rgba(46, 107, 255, 0.45);
+  --shadow-glow-gold: 0 0 40px -10px rgba(237, 186, 94, 0.4);
+  --shadow-card: 0 20px 60px -24px rgba(2, 6, 18, 0.8);
+
+  /* Animations */
+  --animate-marquee: marquee 38s linear infinite;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-float-slow: float 11s ease-in-out infinite;
+  --animate-pulse-ring: pulse-ring 2.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  --animate-shimmer: shimmer 2.6s linear infinite;
+  --animate-spin-slow: spin 14s linear infinite;
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(50%); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-14px); }
+  }
+  @keyframes pulse-ring {
+    0% { transform: scale(1); opacity: 0.55; }
+    100% { transform: scale(2.1); opacity: 0; }
+  }
+  @keyframes shimmer {
+    from { background-position: 200% center; }
+    to { background-position: -200% center; }
+  }
+}
+
+/* ── Base ─────────────────────────────────────────────────────── */
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 96px;
+}
+
+body {
+  @apply bg-ink-950 text-mist-200 font-sans antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+::selection {
+  background: rgba(46, 107, 255, 0.35);
+  color: #f2f5fc;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #070b16;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #1b2a4d, #253763);
+  border-radius: 999px;
+  border: 2px solid #070b16;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2e6bff;
+}
+
+/* Focus visibility */
+:focus-visible {
+  outline: 2px solid var(--color-brand-400);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* ── Utilities ────────────────────────────────────────────────── */
+
+/* Frosted glass panel */
+.glass {
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018));
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.glass-deep {
+  background: linear-gradient(160deg, rgba(13, 21, 38, 0.72), rgba(7, 11, 22, 0.62));
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+}
+
+/* Gradient text — brand arc */
+.text-arc {
+  background: linear-gradient(110deg, #7fb0ff 0%, #4d8dff 30%, #a78bfa 62%, #67e8f9 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Gradient text — gold */
+.text-gold-arc {
+  background: linear-gradient(110deg, #f8d68a 0%, #edba5e 45%, #dda03c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* 1px gradient border via mask */
+.border-arc {
+  position: relative;
+}
+.border-arc::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(140deg, rgba(127, 176, 255, 0.55), rgba(255, 255, 255, 0.06) 35%, rgba(237, 186, 94, 0.45));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Dotted map grid */
+.dot-grid {
+  background-image: radial-gradient(rgba(150, 180, 255, 0.16) 1px, transparent 1.4px);
+  background-size: 26px 26px;
+}
+
+.grid-lines {
+  background-image:
+    linear-gradient(rgba(120, 150, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120, 150, 255, 0.05) 1px, transparent 1px);
+  background-size: 72px 72px;
+}
+
+/* Film grain */
+.noise::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.045'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Button shine sweep */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(120%) skewX(-18deg);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+  transition: transform 0.7s var(--ease-out-expo);
+}
+.btn-shine:hover::after {
+  transform: translateX(-120%) skewX(-18deg);
+}
+
+/* Marquee — RTL aware: content flows right-to-left */
+.marquee-track {
+  animation: marquee var(--marquee-duration, 38s) linear infinite;
+  will-change: transform;
+}
+.marquee-paused:hover .marquee-track {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(50%); }
+}
+
+/* Shimmer text sweep */
+.shimmer-text {
+  background: linear-gradient(
+    110deg,
+    #c6d0e6 20%,
+    #ffffff 40%,
+    #7fb0ff 50%,
+    #ffffff 60%,
+    #c6d0e6 80%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 5s linear infinite;
+}
+
+/* Route dash animation for SVGs */
+.route-dash {
+  stroke-dasharray: 6 8;
+  animation: route-dash 1.4s linear infinite;
+}
+@keyframes route-dash {
+  to { stroke-dashoffset: -28; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

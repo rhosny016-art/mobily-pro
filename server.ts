@@ -1,5 +1,6 @@
 import express from "express";
 import path from "path";
+import fs from "fs";
 import dotenv from "dotenv";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
@@ -278,10 +279,74 @@ async function startServer() {
     }
   });
 
+  // API Route — contact form leads
+  // Persists locally to data/leads.jsonl (always) and attempts Firestore
+  // using the bundled applet config when network auth is available.
+  const saveLead = async (lead: Record<string, unknown>) => {
+    try {
+      const dir = path.join(process.cwd(), "data");
+      fs.mkdirSync(dir, { recursive: true });
+      fs.appendFileSync(path.join(dir, "leads.jsonl"), JSON.stringify(lead) + "\n");
+    } catch (err) {
+      console.warn("Could not persist lead locally:", (err as Error).message);
+    }
+
+    try {
+      let config: Record<string, string> = {};
+      try {
+        config = JSON.parse(
+          fs.readFileSync(path.join(process.cwd(), "firebase-applet-config.json"), "utf8"),
+        );
+      } catch {
+        config = {};
+      }
+      const apiKey = process.env.VITE_FIREBASE_API_KEY || config.apiKey;
+      if (!apiKey) return;
+
+      const { initializeApp } = await import("firebase/app");
+      const { getFirestore, collection, addDoc } = await import("firebase/firestore");
+      const { getAuth, signInAnonymously } = await import("firebase/auth");
+
+      const app = initializeApp(
+        {
+          apiKey,
+          projectId: process.env.VITE_FIREBASE_PROJECT_ID || config.projectId,
+          appId: process.env.VITE_FIREBASE_APP_ID || config.appId,
+          authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN || config.authDomain,
+          storageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET || config.storageBucket,
+          messagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID || config.messagingSenderId,
+        },
+        "dalni-server",
+      );
+      await signInAnonymously(getAuth(app));
+      const db = getFirestore(app, config.firestoreDatabaseId);
+      await addDoc(collection(db, "contact_requests"), lead);
+    } catch (err) {
+      console.warn("Firestore save skipped (lead kept locally):", (err as Error).message);
+    }
+  };
+
+  app.post("/api/contact", async (req, res) => {
+    const { name, phone, service, message } = req.body || {};
+    if (!name || !phone || !message) {
+      return res.status(400).json({ error: "الاسم ورقم الهاتف والرسالة مطلوبة" });
+    }
+    const lead = {
+      name: String(name).slice(0, 120),
+      phone: String(phone).slice(0, 40),
+      service: service ? String(service).slice(0, 120) : "",
+      message: String(message).slice(0, 2000),
+      status: "new",
+      created_date: new Date().toISOString(),
+    };
+    await saveLead(lead);
+    res.json({ ok: true, message: "تم استلام رسالتك بنجاح" });
+  });
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: { middlewareMode: true, allowedHosts: true },
       appType: "spa",
     });
     app.use(vite.middlewares);
