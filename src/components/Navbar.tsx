@@ -7,9 +7,9 @@ import { buildWhatsAppLink } from "@/lib/whatsapp";
 
 const LINKS = [
   { href: "/", label: "الرئيسية", id: "hero" },
-  { href: "#services", label: "عوالمنا", id: "services" },
-  { href: "#why-us", label: "الحمض النووي", id: "why-us" },
-  { href: "#reviews", label: "أصوات النجاح", id: "reviews" },
+  { href: "#services", label: "خدماتنا", id: "services" },
+  { href: "#why-us", label: "لماذا نحن", id: "why-us" },
+  { href: "#reviews", label: "آراء العملاء", id: "reviews" },
   { href: "#faq", label: "الأسئلة الشائعة", id: "faq" },
 ];
 

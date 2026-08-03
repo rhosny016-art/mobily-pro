@@ -29,9 +29,9 @@ export function ServicesSection() {
       
       <div className="relative max-w-7xl mx-auto px-4 lg:px-8 z-10">
         <SectionHeading
-          eyebrow="عوالم التسويق"
-          title="بواباتك نحو السيطرة الرقمية"
-          subtitle="استكشف الخدمات المصممة خصيصاً لاختراق السوق المحلي وصناعة حضور رقمي لا ينسى."
+          eyebrow="خدماتنا"
+          title="حلول تسويقية متكاملة لنمو أعمالك"
+          subtitle="نقدم لك باقة من الخدمات المبتكرة والمصممة خصيصاً لتلبية احتياجات نشاطك التجاري وتعزيز تواجدك الرقمي."
           light={true}
         />
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 pt-8 md:pt-12 perspective-[1200px]">
@@ -71,8 +71,8 @@ export function StatsSection() {
       <div className="relative max-w-7xl mx-auto px-4 lg:px-8 z-10">
         <SectionHeading
           eyebrow="تأثير حقيقي"
-          title="أرقام تصنع الفارق"
-          subtitle="لغة الأرقام لا تكذب. كل إحصائية تمثل نقلة نوعية في حياة نشاط تجاري قرر الانطلاق نحو القمة."
+          title="أرقام تعكس التزامنا بالنجاح"
+          subtitle="لغة الأرقام هي الدليل الأوضح على ما نحققه من نجاحات ملموسة لشركائنا في مختلف القطاعات."
           light={true}
         />
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 pt-12">
@@ -125,9 +125,9 @@ export function WhyChooseUsSection() {
       
       <div className="relative max-w-7xl mx-auto px-4 lg:px-8 z-10">
         <SectionHeading
-          eyebrow="الحمض النووي لدلّني"
-          title="لماذا نحن مختلفون؟"
-          subtitle="نحن لا نتبع القوالب الجاهزة. كل مشروع هو تحدٍ جديد نصنع له استراتيجية فريدة ومبتكرة."
+          eyebrow="لماذا نحن"
+          title="شريكك الاستراتيجي في كل خطوة"
+          subtitle="نؤمن بأن كل مشروع هو فرصة لابتكار قصة نجاح فريدة، لذا نكرس خبراتنا لنقدم لك حلولاً تتجاوز التوقعات."
           light={true}
         />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 pt-12 perspective-[1000px]">

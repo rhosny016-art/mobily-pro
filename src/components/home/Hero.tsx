@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, ArrowLeft, TrendingUp, PhoneCall, Globe, Zap } from "lucide-react";
+import { Search, ArrowLeft, PhoneCall, Zap } from "lucide-react";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
-import heroIslandImg from "@/assets/images/marketing_hub_city_1785775329709.jpg";
+import ServicesNodeMap from "./ServicesNodeMap";
 
 const SEARCH_SUGGESTIONS = [
   "أفضل عيادة طبية متخصصة...",
@@ -60,7 +60,7 @@ export default function Hero() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card border-blue-500/30 text-blue-300 w-fit mb-8"
           >
             <Zap className="w-4 h-4 text-blue-400" />
-            <span className="text-sm font-bold tracking-wider">مستقبل التسويق الرقمي</span>
+            <span className="text-sm font-bold tracking-wider">شريكك الموثوق في رحلة النجاح</span>
           </motion.div>
 
           <motion.h1
@@ -70,8 +70,8 @@ export default function Hero() {
             custom={1}
             className="text-5xl sm:text-6xl lg:text-7xl font-black leading-[1.1] text-white drop-shadow-2xl"
           >
-            دع العالم <br />
-            <span className="text-gradient inline-block mt-2">يجدك بسهولة</span>
+            دع عملاءك <br />
+            <span className="text-gradient inline-block mt-2">يجدونك بكل سهولة</span>
           </motion.h1>
 
           <motion.p
@@ -81,7 +81,7 @@ export default function Hero() {
             custom={2}
             className="mt-6 text-lg sm:text-xl text-gray-300 font-medium leading-[1.8] max-w-lg drop-shadow-md"
           >
-            نصنع لك حضوراً رقمياً يخطف الأنظار عبر تقنيات تسويقية متقدمة تجعل نشاطك يتصدر نتائج البحث ويسيطر على الخرائط.
+            نحن هنا لنضعك في المقدمة. بخطوات مدروسة ولمسة إبداعية، نصنع لنشاطك حضوراً رقمياً يتردد صداه ويوصلك لعملائك حيثما كانوا، بكل احترافية.
           </motion.p>
 
           {/* Action CTA Buttons */}
@@ -107,7 +107,7 @@ export default function Hero() {
               href="#services"
               className="glass-card glass-card-hover flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-bold text-gray-200 text-base sm:text-lg"
             >
-              <span>استكشف عوالمنا</span>
+              <span>استكشف خدماتنا</span>
               <ArrowLeft className="w-5 h-5 text-gray-400" />
             </a>
           </motion.div>
@@ -153,59 +153,12 @@ export default function Hero() {
             {/* Core Image container */}
             <div className="relative w-full h-full flex items-center justify-center group animate-float" style={{ transformStyle: "preserve-3d" }}>
               <div className="absolute inset-4 rounded-full bg-blue-500/30 blur-3xl pointer-events-none" />
-              <img
-                src={heroIslandImg}
-                alt="المدينة العائمة لتغطية الخرائط"
-                loading="eager"
-                decoding="async"
-                className="w-full h-full object-cover filter contrast-[1.2] brightness-[1.1] relative z-10 scale-110 mix-blend-screen"
-                style={{
-                  WebkitMaskImage: "radial-gradient(circle at center, black 40%, transparent 75%)",
-                  maskImage: "radial-gradient(circle at center, black 40%, transparent 75%)",
-                }}
-                referrerPolicy="no-referrer"
-              />
+              <div className="relative z-10 w-full h-full scale-[1.1]">
+                <ServicesNodeMap />
+              </div>
             </div>
 
-            {/* 3D Floating Glass Cards */}
-            <motion.div
-              initial={{ opacity: 0, x: 50, z: -50 }}
-              animate={{ opacity: 1, x: 0, z: 0 }}
-              transition={{ duration: 0.8, delay: 0.8 }}
-              className="absolute top-10 left-0 sm:top-20 sm:left-4 z-30"
-            >
-              <div className="glass-card glass-card-hover rounded-2xl p-5 flex flex-col items-center min-w-[140px]">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-2xl font-black text-white leading-none text-shadow-glow">
-                    +300%
-                  </span>
-                  <TrendingUp className="w-5 h-5 text-green-400" />
-                </div>
-                <div className="w-full h-1.5 bg-gray-700/50 rounded-full overflow-hidden mb-2">
-                  <div className="w-3/4 h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
-                </div>
-                <span className="text-xs font-bold text-gray-300">نمو غير مسبوق</span>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: -50, z: 50 }}
-              animate={{ opacity: 1, x: 0, z: 0 }}
-              transition={{ duration: 0.8, delay: 1 }}
-              className="absolute bottom-10 right-0 sm:bottom-20 sm:-right-4 z-30"
-            >
-              <div className="glass-card glass-card-hover rounded-2xl p-5 flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 text-purple-400 flex items-center justify-center border border-purple-500/30">
-                  <Globe className="w-6 h-6" />
-                </div>
-                <div className="flex flex-col text-right">
-                  <span className="text-2xl font-black text-white leading-tight">
-                    +15 مدينة
-                  </span>
-                  <span className="text-xs font-bold text-gray-400">تغطية شاملة للخرائط</span>
-                </div>
-              </div>
-            </motion.div>
+            {/* Removed 3D Floating Glass Cards */}
 
           </motion.div>
         </div>

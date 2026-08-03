@@ -15,8 +15,8 @@ export function TestimonialsSection() {
 
       <div className="relative max-w-7xl mx-auto px-4 lg:px-8 z-10">
         <SectionHeading
-          eyebrow="قالوا عنا"
-          title="أصوات النجاح الحقيقية"
+          eyebrow="آراء العملاء"
+          title="تجارب حقيقية لشركائنا"
           subtitle="تجارب حقيقية لشركائنا الذين حطموا الأرقام القياسية بعد تعاونهم مع دلّني."
           light={true}
         />
@@ -97,9 +97,9 @@ export function FAQSection() {
       
       <div className="relative max-w-4xl mx-auto px-4 lg:px-8 z-10">
         <SectionHeading
-          eyebrow="إجابات ووضوح"
+          eyebrow="دليلك للوضوح"
           title="الأسئلة الشائعة"
-          subtitle="كل ما تود معرفته قبل الانطلاق في رحلة النمو معنا."
+          subtitle="نجيب هنا على أبرز الاستفسارات لنضعك على بينة من كل التفاصيل قبل بدء رحلة النجاح معنا."
           light={true}
         />
 
@@ -166,7 +166,7 @@ export function CTASection() {
           transition={{ duration: 0.7, delay: 0.15 }}
           className="mt-8 text-xl md:text-2xl text-blue-100/80 leading-[1.8] max-w-3xl mx-auto font-medium"
         >
-          لا تترك عملائك للمنافسين. استثمر في حضور رقمي قوي واستحوذ على صدارة البحث. الاستشارة الأولى مجانية تماماً.
+          نحن لا نقدم مجرد خدمات، بل نبني شراكات استراتيجية. تواصل معنا اليوم لتحصل على تقييم شامل لنشاطك، واستشارة مجانية ترسم لك خارطة الطريق نحو القمة.
         </motion.p>
         
         <motion.div
@@ -177,14 +177,14 @@ export function CTASection() {
           className="mt-14 flex flex-col sm:flex-row justify-center items-center gap-6"
         >
           <WhatsAppButton size="lg" className="w-full sm:w-auto shadow-[0_0_40px_rgba(37,211,102,0.4)]">
-            ابدأ محادثة واستشرنا مجاناً
+            ابدأ رحلتك واستشرنا مجاناً
           </WhatsAppButton>
           
           <Link
-            to="/services"
+            to="/#services"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-3 glass-card glass-card-hover px-8 py-4 rounded-xl font-bold text-lg text-white border-white/20 hover:bg-white/10"
           >
-            استكشف عوالمنا
+            اكتشف خدماتنا
             <ArrowLeft className="w-5 h-5" aria-hidden="true" />
           </Link>
         </motion.div>
