@@ -5,10 +5,10 @@ import Logo from "@/components/Logo";
 import { adminLogout, isAdmin } from "@/lib/store";
 
 const NAV = [
-  { to: "/dashboard", end: true, icon: BarChart3, label: "الإحصائيات" },
-  { to: "/dashboard/services", end: false, icon: Package, label: "الخدمات" },
-  { to: "/dashboard/requests", end: false, icon: Inbox, label: "الطلبات" },
-  { to: "/dashboard/settings", end: false, icon: Settings, label: "الإعدادات" },
+  { to: "/dashboard", end: true, icon: BarChart3, label: "الإحصائيات", prefetch: () => import("@/pages/dashboard/Stats") },
+  { to: "/dashboard/services", end: false, icon: Package, label: "الخدمات", prefetch: () => import("@/pages/dashboard/Services") },
+  { to: "/dashboard/requests", end: false, icon: Inbox, label: "الطلبات", prefetch: () => import("@/pages/dashboard/Requests") },
+  { to: "/dashboard/settings", end: false, icon: Settings, label: "الإعدادات", prefetch: () => import("@/pages/dashboard/Settings") },
 ];
 
 export default function DashboardLayout() {
@@ -33,6 +33,8 @@ export default function DashboardLayout() {
             to={item.to}
             end={item.end}
             onClick={() => setOpen(false)}
+            onMouseEnter={() => item.prefetch?.()}
+            onFocus={() => item.prefetch?.()}
             className={({ isActive }) =>
               `flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition ${
                 isActive ? "bg-primary text-white shadow-lg shadow-primary/25" : "text-foreground/70 hover:bg-muted"

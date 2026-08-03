@@ -1,538 +1,246 @@
-import { memo, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  Globe, Sparkles, ArrowLeft, X, CheckCircle2, MapPin, Compass, Radio, Trophy
-} from "lucide-react";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { MousePointerClick, MapPin, Smartphone, Star, Megaphone, Flag, CheckCircle2, Rocket } from "lucide-react";
 import SectionHeading from "@/components/SectionHeading";
-import { buildWhatsAppLink } from "@/lib/whatsapp";
 
-interface DigitalHub {
-  id: string;
-  name: string;
-  country: string;
-  region: "gulf" | "mena" | "global";
-  clients: string;
-  details: string;
-  isCentral?: boolean;
-  coords: { x: number; y: number };
-  badgePos?: "top" | "bottom" | "left" | "right";
-}
-
-// Well-organized, realistic geographic coordinates inside safe bounds [150..650] on 800x800 canvas.
-const DIGITAL_HUBS: DigitalHub[] = [
-  // --- المركز الرئيسي ---
+const MAP_STATIONS = [
   {
-    id: "amm",
-    name: "المقر الرئيسي",
-    country: "إدارة التغطية والتسويق",
-    region: "global",
-    clients: "+150 مشروع ناجح",
-    details: "المركز السحابي الرئيسي لوكالة دلّني للتسويق الرقمي المتكامل، لتنسيق استراتيجيات النجاح وتصدر المحركات والخرائط والإعلانات الممولة.",
-    isCentral: true,
-    coords: { x: 500, y: 450 },
-    badgePos: "bottom"
-  },
-
-  // --- دول الخليج العربي ---
-  {
-    id: "ruh",
-    name: "الرياض",
-    country: "السعودية",
-    region: "gulf",
-    clients: "+45 شركة نشطة",
-    details: "إدارة متكاملة لحملات النجاح الإعلانية، تحسين خرائط Google وصناعة المحتوى للشركات بالمملكة.",
-    coords: { x: 440, y: 410 },
-    badgePos: "top"
+    id: "ads",
+    title: "Google Ads Hub",
+    subtitle: "حملات جوجل الإعلانية",
+    stat: "+300%",
+    statLabel: "عائد استثمار",
+    icon: MousePointerClick,
+    color: "from-blue-500 to-cyan-400",
+    shadow: "shadow-blue-500/50",
+    border: "border-blue-500/50",
+    text: "text-blue-400",
+    bg: "bg-blue-500/10",
+    position: "lg:col-start-1 lg:col-end-5 lg:row-start-5",
+    features: ["استهداف دقيق", "إدارة الميزانية الذكية"]
   },
   {
-    id: "jed",
-    name: "جدة",
-    country: "السعودية",
-    region: "gulf",
-    clients: "+30 علامة تجارية",
-    details: "بناء الهويات البصرية والحلول التسويقية الميدانية لقطاع التجزئة والمطاعم بالمنطقة الغربية.",
-    coords: { x: 380, y: 460 },
-    badgePos: "bottom"
+    id: "maps",
+    title: "Google Maps Highway",
+    subtitle: "تحسين خرائط و ملفات جوجل",
+    stat: "+250",
+    statLabel: "عملاء جدد شهرياً",
+    icon: MapPin,
+    color: "from-green-500 to-emerald-400",
+    shadow: "shadow-emerald-500/50",
+    border: "border-emerald-500/50",
+    text: "text-emerald-400",
+    bg: "bg-emerald-500/10",
+    position: "lg:col-start-4 lg:col-end-8 lg:row-start-4",
+    features: ["تصدر نتائج البحث المحلية", "زيادة الزيارات والمكالمات"]
   },
   {
-    id: "kwi",
-    name: "الكويت",
-    country: "الكويت",
-    region: "gulf",
-    clients: "+25 شريك نمو",
-    details: "استشارات التجارة الإلكترونية، تحسين نتائج المحركات Local SEO للشركات المحلية بالديرة.",
-    coords: { x: 480, y: 340 },
-    badgePos: "top"
+    id: "social",
+    title: "Social Media Trail",
+    subtitle: "سناب شات، تيك توك، إنستغرام",
+    stat: "10x",
+    statLabel: "جذب الجيل الجديد",
+    icon: Smartphone,
+    color: "from-pink-500 to-purple-500",
+    shadow: "shadow-purple-500/50",
+    border: "border-purple-500/50",
+    text: "text-purple-400",
+    bg: "bg-purple-500/10",
+    position: "lg:col-start-7 lg:col-end-11 lg:row-start-3",
+    features: ["محتوى فيروسي جذاب", "حملات مؤثرين مستهدفة"]
   },
   {
-    id: "dxb",
-    name: "دبي",
-    country: "الإمارات",
-    region: "gulf",
-    clients: "+35 مشروع قائم",
-    details: "حلول تقنية رائدة، توثيق الحسابات والأنشطة التجارية للمؤسسات المبتكرة بالإمارات.",
-    coords: { x: 560, y: 390 },
-    badgePos: "right"
-  },
-
-  // --- الشرق الأوسط وشمال أفريقيا ---
-  {
-    id: "egy",
-    name: "مصر",
-    country: "مصر",
-    region: "mena",
-    clients: "+60 مشروع نشط",
-    details: "مركز البرمجة والإنتاج الإبداعي وإدارة بروفايلات خرائط جوجل والحملات التسويقية بكافة المحافظات.",
-    coords: { x: 320, y: 400 },
-    badgePos: "bottom"
+    id: "reviews",
+    title: "Review Valley",
+    subtitle: "إدارة التقييمات و السمعة",
+    stat: "4.9",
+    statLabel: "نجوم (أكثر من 200 مراجعة)",
+    icon: Star,
+    color: "from-amber-400 to-yellow-500",
+    shadow: "shadow-amber-500/50",
+    border: "border-amber-500/50",
+    text: "text-amber-400",
+    bg: "bg-amber-500/10",
+    position: "lg:col-start-3 lg:col-end-7 lg:row-start-2",
+    features: ["بناء الثقة الرقمية", "الرد الاحترافي على العملاء"]
   },
   {
-    id: "amm_jo",
-    name: "عَمّان",
-    country: "الأردن",
-    region: "mena",
-    clients: "+16 شركة",
-    details: "حلول إعلانية وتطوير البرمجيات للمتاجر الإلكترونية وشركات التكنولوجيا بالأردن.",
-    coords: { x: 390, y: 330 },
-    badgePos: "top"
-  },
-  {
-    id: "bgd",
-    name: "بغداد",
-    country: "العراق",
-    region: "mena",
-    clients: "+14 مشروع",
-    details: "تسويق الأنشطة التجارية والتجارة الإلكترونية والظهور بالمحركات والخرائط بالعراق.",
-    coords: { x: 440, y: 280 },
-    badgePos: "right"
-  },
-  {
-    id: "cas",
-    name: "المغرب",
-    country: "المغرب",
-    region: "mena",
-    clients: "+12 شركة",
-    details: "تقديم الاستشارات التسويقية والسوشيال ميديا للشركات والمتاجر في المغرب ودول المغارب.",
-    coords: { x: 190, y: 360 },
-    badgePos: "left"
-  },
-  {
-    id: "tun",
-    name: "تونس",
-    country: "تونس",
-    region: "mena",
-    clients: "+10 شركات",
-    details: "تسويق محلي وتطوير الهويات التجارية للمؤسسات والمشاريع بجمهورية تونس.",
-    coords: { x: 260, y: 290 },
-    badgePos: "top"
-  },
-  {
-    id: "ist",
-    name: "تركيا",
-    country: "تركيا",
-    region: "mena",
-    clients: "+15 شركة",
-    details: "خدمات تسويق وتوثيق الشركات الناشئة والعلامات المستهدفة للجمهور العربي والتركي.",
-    coords: { x: 360, y: 230 },
-    badgePos: "top"
-  },
-
-  // --- أوروبا والعالم (Global) ---
-  {
-    id: "lon",
-    name: "لندن",
-    country: "المملكة المتحدة",
-    region: "global",
-    clients: "+12 مؤسسة",
-    details: "إدارة وتسويق الأعمال الموجهة للجاليات العربية والاستثمارات الشرق أوسطية في بريطانيا.",
-    coords: { x: 220, y: 190 },
-    badgePos: "top"
-  },
-  {
-    id: "fra",
-    name: "ألمانيا",
-    country: "ألمانيا",
-    region: "global",
-    clients: "+8 شركاء",
-    details: "استشارات تقنية وتسويق سحابي للعلامات التجارية العاملة في السوق الأوروبي.",
-    coords: { x: 290, y: 180 },
-    badgePos: "top"
-  },
-  {
-    id: "nyc",
-    name: "أمريكا",
-    country: "أمريكا",
-    region: "global",
-    clients: "+10 مشاريع",
-    details: "ربط العلامات التجارية بالأسواق الأمريكية وتوسيع نطاق الحملات العابرة للقارات.",
-    coords: { x: 160, y: 270 },
-    badgePos: "left"
-  },
-  {
-    id: "kul",
-    name: "ماليزيا",
-    country: "ماليزيا",
-    region: "global",
-    clients: "+9 مشاريع",
-    details: "تغطية تسويقية وتقنية للمشاريع والاستثمارات المتواجدة بدول جنوب شرق آسيا.",
-    coords: { x: 630, y: 510 },
-    badgePos: "right"
-  },
+    id: "bazaar",
+    title: "Services Bazaar",
+    subtitle: "Other Digital Marketing Services",
+    stat: "100%",
+    statLabel: "النجاح الرقمي",
+    icon: Megaphone,
+    color: "from-indigo-400 to-blue-600",
+    shadow: "shadow-indigo-500/50",
+    border: "border-indigo-500/50",
+    text: "text-indigo-400",
+    bg: "bg-indigo-500/10",
+    position: "lg:col-start-9 lg:col-end-13 lg:row-start-1",
+    features: ["تصميم هويات بصرية", "تطوير مواقع وتطبيقات"]
+  }
 ];
 
-// Derived once; the hubs list never changes for the lifetime of the component.
-const centralHub = DIGITAL_HUBS.find((h) => h.isCentral) || DIGITAL_HUBS[0];
-const otherHubs = DIGITAL_HUBS.filter((h) => !h.isCentral);
-
-/** A single connection-arc beam: static glow line + animated draw + travelling dot.
- *  Rendered as a memoized row inside the SVG so selecting a hub only Restyles the
- *  two affected arcs instead of re-rendering the whole <g> tree. */
-const ArcBeam = memo(function ArcBeam({
-  hub,
-  hubIndex,
-}: {
-  hub: DigitalHub;
-  hubIndex: number;
-}) {
-  const midX = (centralHub.coords.x + hub.coords.x) / 2;
-  const midY = (centralHub.coords.y + hub.coords.y) / 2 - 20;
-  const arcPath = `M ${centralHub.coords.x},${centralHub.coords.y} Q ${midX},${midY} ${hub.coords.x},${hub.coords.y}`;
-  const arcDelay = hubIndex * 0.18;
-
-  return (
-    <g>
-      {/* Static arc glow line */}
-      <path
-        d={arcPath}
-        fill="none"
-        stroke="#06B6D4"
-        strokeWidth="1.5"
-        strokeOpacity="0.3"
-      />
-      {/* Animated arc draw — CSS stroke-dashoffset (GPU) */}
-      <path
-        d={arcPath}
-        fill="none"
-        stroke="url(#cyanArcGradient)"
-        strokeWidth="1"
-        strokeLinecap="round"
-        className="arc-draw"
-        style={{ animationDelay: `${arcDelay}s` }}
-      />
-      {/* Traveling dot — SMIL animateMotion (native SVG, zero JS) */}
-      <circle r="2.5" fill="#38BDF8" style={{ filter: "drop-shadow(0 0 3px #38BDF8)" }}>
-        <animateMotion
-          dur="3s"
-          repeatCount="indefinite"
-          begin={`${arcDelay}s`}
-          path={arcPath}
-        />
-      </circle>
-    </g>
-  );
-});
-
-/** A single regional pin — memoized so click-selection elsewhere doesn't re-render
- *  every pin label. */
-const HubPin = memo(function HubPin({
-  hub,
-  isSelected,
-  onClick,
-}: {
-  hub: DigitalHub;
-  isSelected: boolean;
-  onClick: (hub: DigitalHub) => void;
-}) {
-  // Smart alignment to prevent text badges from clipping left/right edges on mobile.
-  const labelAlignClass =
-    hub.coords.x < 220 ? "left-0 translate-x-0" :
-    hub.coords.x > 620 ? "right-0 translate-x-0" :
-    "-translate-x-1/2 left-1/2";
-
-  return (
-    <div
-      id={`pin-node-${hub.id}`}
-      className="absolute z-30 cursor-pointer -translate-x-1/2 -translate-y-1/2 flex flex-col items-center group/pin"
-      style={{
-        left: `${(hub.coords.x / 800) * 100}%`,
-        top: `${(hub.coords.y / 800) * 100}%`,
-      }}
-      onClick={() => onClick(hub)}
-    >
-      <div className={`relative flex items-center justify-center w-4 h-4 sm:w-6 sm:h-6 rounded-full transition-all shadow-md border ${
-        isSelected
-          ? "bg-gradient-to-b from-amber-300 via-amber-400 to-amber-500 border-white shadow-[0_0_14px_rgba(245,158,11,0.9)] scale-110"
-          : "bg-slate-900 border-amber-400/90 hover:border-white hover:bg-amber-600"
-      }`}>
-        <MapPin className={`w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 ${isSelected ? "text-slate-950" : "text-amber-400"}`} />
-      </div>
-
-      <div className={`absolute top-full mt-0.5 ${labelAlignClass} bg-[#070E1C]/95 border text-[8px] sm:text-[11px] font-bold px-1 sm:px-1.5 py-0.5 rounded shadow-md whitespace-nowrap backdrop-blur-sm pointer-events-none transition-all ${
-        isSelected
-          ? "border-amber-400 text-amber-300 font-black scale-105"
-          : "border-slate-800 text-slate-200 group-hover/pin:border-amber-400/80 group-hover/pin:text-amber-300"
-      }`}>
-        {hub.name}
-      </div>
-    </div>
-  );
-});
-
 export default function InteractiveAgencyMap() {
-  const [selectedHub, setSelectedHub] = useState<DigitalHub | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start center", "end center"]
+  });
+
+  const pathLength = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   return (
-    <section
-      id="network"
-      aria-label="خريطة النجاح للأنشطة التجارية"
-      className="relative py-14 sm:py-20 lg:py-28 bg-[#030712] text-white overflow-hidden border-t border-slate-900 content-paint"
-      style={{ contentVisibility: "auto", containIntrinsicSize: "0px 800px" }}
-    >
-      {/* Dynamic Ambient Background Glows — lighter on mobile to reduce GPU cost */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] sm:w-[650px] sm:h-[650px] lg:w-[950px] lg:h-[950px] bg-gradient-to-r from-amber-500/10 via-cyan-500/5 to-transparent rounded-full blur-[80px] sm:blur-[130px] pointer-events-none" />
+    <section id="network" ref={containerRef} className="relative py-24 md:py-32 bg-[#060b1a] overflow-hidden" dir="rtl">
+      {/* Background Ambience */}
+      <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[150px] mix-blend-screen pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px] mix-blend-screen pointer-events-none" />
+      
+      {/* Grid Pattern */}
+      <div 
+        className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        style={{
+          backgroundImage: `linear-gradient(rgba(255, 255, 255, 1) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 1) 1px, transparent 1px)`,
+          backgroundSize: '40px 40px',
+        }}
+      />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative max-w-7xl mx-auto px-4 lg:px-8 z-10">
         <SectionHeading
-          id="network-section-heading"
-          eyebrow="خريطة نجاح الأنشطة التجارية 🏆"
-          title="خريطة النجاح لتغطية الأنشطة التجارية والتسويقية"
-          subtitle="وكالة تسويق رقمي متكاملة تقدم منظومة سحابية شاملة لتصدر الأنشطة التجارية وتفوقها في نتائج البحث والخرائط والحملات الإعلانية عبر مختلف الأسواق."
-          light
+          eyebrow="رحلة النمو"
+          title="خريطة الخدمات الاحترافية للنمو"
+          subtitle="مسار استراتيجي متكامل يأخذك من نقطة البداية إلى القمة الرقمية، عبر محطات تسويقية مدروسة بعناية."
+          light={true}
         />
 
-        {/* HIGH-END REALISTIC GLOBE CONTAINER */}
-        <div
-          id="map-dashboard"
-          className="relative mt-6 sm:mt-10 rounded-2xl sm:rounded-3xl bg-[#040914] border border-slate-800/90 shadow-[0_25px_80px_rgba(0,0,0,0.85)] overflow-hidden backdrop-blur-md sm:backdrop-blur-xl blur-gpu"
-        >
-          {/* TOP HUD STATUS BAR */}
-          <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-slate-800/80 flex items-center justify-between bg-slate-950/80 backdrop-blur-md">
-            <div className="flex items-center gap-2">
-              <Trophy className="w-4 h-4 text-amber-400 animate-pulse" />
-              <span className="text-xs sm:text-sm font-bold text-slate-200">
-                خريطة نجاح الأنشطة التجارية <span className="text-amber-400 font-mono">((تغطية واقعية كاملة))</span>
-              </span>
+        <div className="relative mt-20 md:mt-32">
+          
+          {/* Desktop SVG Road Map Background */}
+          <div className="hidden lg:block absolute inset-0 pointer-events-none z-0" dir="ltr">
+            <svg width="100%" height="100%" viewBox="0 0 1200 800" preserveAspectRatio="none" className="overflow-visible">
+              <defs>
+                <linearGradient id="roadGradient" x1="0%" y1="100%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.2" />
+                  <stop offset="50%" stopColor="#8b5cf6" stopOpacity="0.2" />
+                  <stop offset="100%" stopColor="#10b981" stopOpacity="0.2" />
+                </linearGradient>
+                <linearGradient id="roadGlow" x1="0%" y1="100%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#3b82f6" />
+                  <stop offset="50%" stopColor="#8b5cf6" />
+                  <stop offset="100%" stopColor="#10b981" />
+                </linearGradient>
+              </defs>
+              
+              {/* Base Road */}
+              <path 
+                d="M 1100,700 C 900,700 900,550 700,550 C 500,550 500,400 300,400 C 100,400 100,200 100,100" 
+                fill="none" 
+                stroke="url(#roadGradient)" 
+                strokeWidth="40" 
+                strokeLinecap="round" 
+                className="drop-shadow-2xl"
+              />
+              
+              {/* Animated Progress Road */}
+              <motion.path 
+                d="M 1100,700 C 900,700 900,550 700,550 C 500,550 500,400 300,400 C 100,400 100,200 100,100" 
+                fill="none" 
+                stroke="url(#roadGlow)" 
+                strokeWidth="6" 
+                strokeLinecap="round"
+                style={{ pathLength }}
+                className="drop-shadow-[0_0_15px_rgba(139,92,246,0.8)]"
+              />
+              
+              {/* Dashed Center Line */}
+              <path 
+                d="M 1100,700 C 900,700 900,550 700,550 C 500,550 500,400 300,400 C 100,400 100,200 100,100" 
+                fill="none" 
+                stroke="rgba(255,255,255,0.3)" 
+                strokeWidth="2" 
+                strokeDasharray="10 10" 
+                strokeLinecap="round" 
+              />
+            </svg>
+            
+            {/* Start & End Labels for Road (Positioned for RTL layout, SVG is LTR) */}
+            <div className="absolute bottom-[-40px] right-[50px] flex items-center gap-2 bg-slate-800/80 border border-slate-700 px-4 py-2 rounded-full backdrop-blur-md shadow-lg" dir="rtl">
+              <Flag className="w-5 h-5 text-blue-400" />
+              <span className="text-white font-bold text-sm">بداية رحلتك</span>
             </div>
-
-            <div className="flex items-center gap-2 font-mono text-xs text-amber-400 bg-amber-500/10 px-3 py-1 rounded-lg border border-amber-500/30">
-              <Radio className="w-3.5 h-3.5 animate-pulse text-amber-400" />
-              <span>مشاريع ناجحة 100%</span>
+            
+            <div className="absolute top-[-20px] left-[50px] flex items-center gap-2 bg-emerald-500/20 border border-emerald-500/50 px-5 py-2.5 rounded-full backdrop-blur-md shadow-[0_0_20px_rgba(16,185,129,0.3)]" dir="rtl">
+              <Rocket className="w-5 h-5 text-emerald-400" />
+              <span className="text-white font-black text-sm">النجاح الرقمي</span>
             </div>
           </div>
 
-          {/* MAIN GLOBE CANVAS WRAPPER - BOUNDED & SPACED */}
-          <div id="map-viewport" className="w-full max-w-[760px] aspect-square mx-auto relative flex items-center justify-center p-2 sm:p-6 overflow-hidden">
-
-            {/* REALISTIC HIGH-PRECISION VECTOR MAP & TERRAIN SVG */}
-            <svg
-              viewBox="0 0 800 800"
-              className="w-full h-full block select-none"
-              preserveAspectRatio="xMidYMid meet"
-            >
-              <defs>
-                {/* Oceanic Realistic Deep Radial Fill */}
-                <radialGradient id="realisticOceanGrad" cx="50%" cy="46%" r="52%">
-                  <stop offset="0%" stopColor="#0B172E" />
-                  <stop offset="50%" stopColor="#071022" />
-                  <stop offset="80%" stopColor="#040A17" />
-                  <stop offset="100%" stopColor="#02050D" />
-                </radialGradient>
-
-                {/* Continental Terrain Realistic Gradient */}
-                <linearGradient id="realisticLandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#122543" />
-                  <stop offset="50%" stopColor="#0E1C33" />
-                  <stop offset="100%" stopColor="#081324" />
-                </linearGradient>
-
-                {/* Golden Coastal Outer Glow */}
-                <linearGradient id="coastalGlowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#F59E0B" stopOpacity="0.8" />
-                  <stop offset="50%" stopColor="#06B6D4" stopOpacity="0.5" />
-                  <stop offset="100%" stopColor="#1E3A8A" stopOpacity="0.3" />
-                </linearGradient>
-
-                {/* Cyber Arc Connection Beam */}
-                <linearGradient id="cyanArcGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.95" />
-                  <stop offset="50%" stopColor="#06B6D4" stopOpacity="0.8" />
-                  <stop offset="100%" stopColor="#F59E0B" stopOpacity="0.9" />
-                </linearGradient>
-
-                {/* Topographic Dot Texture Pattern */}
-                <pattern id="landTopoDots" x="0" y="0" width="12" height="12" patternUnits="userSpaceOnUse">
-                  <circle cx="2" cy="2" r="0.9" fill="#F59E0B" opacity="0.18" />
-                  <circle cx="8" cy="8" r="0.7" fill="#38BDF8" opacity="0.12" />
-                </pattern>
-
-                <filter id="superGlow" x="-50%" y="-50%" width="200%" height="200%">
-                  <feGaussianBlur stdDeviation="5" result="blur" />
-                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                </filter>
-              </defs>
-
-              {/* Realistic Globe Sphere Base & Atmosphere Rim */}
-              <circle cx="400" cy="400" r="372" fill="none" stroke="#F59E0B" strokeWidth="1" opacity="0.2" filter="url(#superGlow)" />
-              <circle cx="400" cy="400" r="360" fill="url(#realisticOceanGrad)" stroke="#1E293B" strokeWidth="2" opacity="0.98" />
-              <circle cx="400" cy="400" r="360" fill="none" stroke="url(#coastalGlowGrad)" strokeWidth="1.5" opacity="0.65" />
-
-              {/* Realistic Latitude & Longitude Orthographic Grid Lines */}
-              <g stroke="#1E3A8A" strokeWidth="0.75" strokeDasharray="3,3" fill="none" opacity="0.45">
-                <ellipse cx="400" cy="160" rx="240" ry="40" />
-                <ellipse cx="400" cy="280" rx="330" ry="60" />
-                <ellipse cx="400" cy="400" rx="360" ry="75" />
-                <ellipse cx="400" cy="520" rx="330" ry="60" />
-                <ellipse cx="400" cy="640" rx="240" ry="40" />
-                <ellipse cx="400" cy="400" rx="120" ry="360" />
-                <ellipse cx="400" cy="400" rx="240" ry="360" />
-                <ellipse cx="400" cy="400" rx="310" ry="360" />
-              </g>
-
-              {/* REALISTIC DETAILED CONTINENT VECTOR GEOMETRY */}
-              <g stroke="#D97706" strokeWidth="1.2" strokeOpacity="0.5" fill="url(#realisticLandGrad)">
-
-                {/* Europe & United Kingdom */}
-                <path d="M 200,170 Q 215,150 230,165 Q 240,155 255,160 Q 280,150 300,165 Q 320,155 340,175 Q 360,170 380,185 Q 390,210 375,225 Q 350,235 330,220 Q 310,240 290,230 Q 270,220 250,235 Q 230,225 210,210 Q 195,190 200,170 Z" />
-
-                {/* Iberian Peninsula & North Africa (Maghreb to Egypt) */}
-                <path d="M 170,320 Q 200,300 240,290 Q 280,285 320,295 Q 360,310 390,340 Q 400,370 380,410 Q 350,430 310,425 Q 260,420 220,400 Q 180,380 165,350 Q 160,335 170,320 Z" />
-
-                {/* Arabian Peninsula & Levant (Saudi Arabia, Oman, Gulf, Jordan, Iraq) */}
-                <path d="M 380,330 Q 420,310 460,300 Q 500,315 540,340 Q 575,370 580,420 Q 570,470 530,490 Q 480,505 440,490 Q 400,470 385,430 Q 375,380 380,330 Z" />
-
-                {/* Asia & Anatolia (Turkey, Mesopotamia, Iran to SE Asia) */}
-                <path d="M 350,220 Q 400,200 460,210 Q 520,195 580,230 Q 640,260 670,320 Q 690,390 660,460 Q 620,530 570,540 Q 530,510 510,460 Q 490,410 460,380 Q 420,360 380,340 Q 360,300 350,220 Z" />
-
-                {/* North & South Americas (West Side of Globe) */}
-                <path d="M 100,220 Q 130,190 170,200 Q 190,230 180,270 Q 160,310 135,320 Q 110,300 95,260 Q 90,240 100,220 Z" />
-
-              </g>
-
-              {/* Realistic Topographic Dot Overlay across Continents */}
-              <g stroke="none" fill="url(#landTopoDots)">
-                <circle cx="400" cy="400" r="350" />
-              </g>
-
-              {/* Realistic Curved Connection Beams from Central Hub —
-                  SVG SMIL + CSS animations (GPU-composited, zero JS overhead) */}
-              {otherHubs.map((hub, hubIndex) => (
-                <ArcBeam key={`arc-group-${hub.id}`} hub={hub} hubIndex={hubIndex} />
-              ))}
-            </svg>
-
-            {/* OVERLAY INTERACTIVE PINS - PERFECTLY ORGANIZED & BOUNDED INSIDE MAP */}
-
-            {/* CENTRAL MAIN HUB PIN: "عُمان والخليج" */}
-            <motion.div
-              id="central-hub-pin"
-              className="absolute z-40 cursor-pointer -translate-x-1/2 -translate-y-1/2 flex flex-col items-center"
-              style={{
-                left: `${(centralHub.coords.x / 800) * 100}%`,
-                top: `${(centralHub.coords.y / 800) * 100}%`,
-              }}
-              onClick={() => setSelectedHub(centralHub)}
-              whileHover={{ scale: 1.15 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <span className="absolute w-8 sm:w-12 h-8 sm:h-12 rounded-full bg-amber-500/40 animate-ping pointer-events-none" />
-
-              <div className="relative flex items-center justify-center w-7 h-7 sm:w-10 sm:h-10 bg-gradient-to-b from-amber-400 via-amber-500 to-amber-600 rounded-full shadow-[0_0_20px_rgba(245,158,11,0.9)] border-2 border-amber-200">
-                <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-slate-950 stroke-[2.5]" />
-              </div>
-
-              <div className="mt-1 bg-[#091222]/95 border-2 border-amber-400 text-amber-300 font-black text-[10px] sm:text-xs px-2 py-0.5 rounded-xl shadow-lg whitespace-nowrap backdrop-blur-md">
-                {centralHub.name} (الرئيسي)
-              </div>
-            </motion.div>
-
-            {/* REGIONAL CITY PINS - ELEGANTLY SPACED & NON-CLIPPING */}
-            {otherHubs.map((hub) => (
-              <HubPin
-                key={`pin-node-${hub.id}`}
-                hub={hub}
-                isSelected={selectedHub?.id === hub.id}
-                onClick={setSelectedHub}
-              />
+          {/* Grid Container for Cards */}
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 lg:grid-rows-5 gap-8 lg:gap-4 min-h-[800px] items-center">
+            
+            {MAP_STATIONS.map((station, i) => (
+              <motion.div
+                key={station.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ delay: i * 0.15, duration: 0.6 }}
+                className={`relative group ${station.position} flex flex-col justify-center`}
+              >
+                {/* Connector dot for desktop */}
+                <div className="hidden lg:block absolute top-1/2 -right-6 w-3 h-3 rounded-full bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)] z-20 border-2 border-slate-900" />
+                
+                <div className={`glass-card rounded-[24px] p-6 sm:p-8 border-2 transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] ${station.border} ${station.shadow} bg-[#0b1225]/80`}>
+                  
+                  {/* Glowing Icon Header */}
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6">
+                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center bg-gradient-to-br ${station.color} shadow-lg text-white shrink-0`}>
+                      <station.icon className="w-7 h-7" />
+                    </div>
+                    
+                    {/* Floating Stat Badge */}
+                    <div className={`px-4 py-2 rounded-xl ${station.bg} border ${station.border} flex flex-col items-center justify-center animate-float sm:w-auto w-full text-center`}>
+                      <span className={`text-xl font-black ${station.text} leading-none mb-1 drop-shadow-md`}>{station.stat}</span>
+                      <span className="text-xs text-gray-300 font-bold whitespace-nowrap">{station.statLabel}</span>
+                    </div>
+                  </div>
+                  
+                  {/* Content */}
+                  <div>
+                    <h3 className="text-xl sm:text-2xl font-black text-white mb-2" dir="ltr">{station.title}</h3>
+                    <p className="text-gray-400 text-sm font-bold mb-5 pb-5 border-b border-white/10">{station.subtitle}</p>
+                    
+                    <ul className="space-y-3">
+                      {station.features.map(f => (
+                        <li key={f} className="flex items-center gap-2.5 text-sm text-gray-300">
+                          <CheckCircle2 className={`w-4 h-4 shrink-0 ${station.text}`} />
+                          <span className="font-medium">{f}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  {/* Interactive Hover Glow */}
+                  <div className={`absolute inset-0 bg-gradient-to-tr ${station.color} opacity-0 group-hover:opacity-5 transition-opacity duration-500 rounded-[24px] pointer-events-none`} />
+                </div>
+              </motion.div>
             ))}
           </div>
-
-          {/* BOTTOM QUICK STATS FOOTER BAR */}
-          <div className="px-4 py-3 bg-slate-950/80 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+          
+          {/* Mobile Start/End indicators */}
+          <div className="flex lg:hidden justify-between items-center mt-12 bg-slate-900/50 p-4 rounded-2xl border border-white/5">
             <div className="flex items-center gap-2">
-              <Compass className="w-4 h-4 text-amber-400" />
-              <span>فروع ومواقع النجاح: <strong className="text-amber-300 font-bold">15 مدينة ناجحة</strong></span>
+              <Flag className="w-5 h-5 text-blue-400" />
+              <span className="text-white font-bold text-sm">البداية</span>
             </div>
-            <div className="flex items-center gap-1.5 text-emerald-400 font-semibold">
-              <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>خريطة نجاح نشطة 24/7</span>
+            <div className="w-full h-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-emerald-500 mx-4 opacity-50 rounded-full" />
+            <div className="flex items-center gap-2">
+              <span className="text-white font-bold text-sm">النجاح</span>
+              <Rocket className="w-5 h-5 text-emerald-400" />
             </div>
           </div>
+
         </div>
-
-
-
-        {/* DETAILED MODAL / CARD WHEN A HUB IS CLICKED */}
-        <AnimatePresence>
-          {selectedHub && (
-            <motion.div
-              initial={{ opacity: 0, y: 20, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 20, scale: 0.96 }}
-              className="mt-6 mx-auto max-w-2xl bg-slate-950/95 border border-amber-500/50 rounded-2xl sm:rounded-3xl p-5 sm:p-7 shadow-[0_20px_50px_rgba(0,0,0,0.9)] backdrop-blur-2xl text-right"
-            >
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center">
-                    <Sparkles className="w-4 h-4 text-amber-400" />
-                  </div>
-                  <div>
-                    <h4 className="text-base sm:text-lg font-black text-amber-300">
-                      {selectedHub.isCentral ? "مركز النجاح الرئيسي — " : "مدينة النجاح — "}
-                      {selectedHub.name} ({selectedHub.country})
-                    </h4>
-                    <p className="text-xs text-slate-400">تغطية الأنشطة التجارية وتصدر نتائج الخرائط</p>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setSelectedHub(null)}
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
-                  aria-label="إغلاق التفاصيل"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-                <div className="bg-slate-900/90 p-3.5 rounded-xl border border-slate-800">
-                  <p className="text-xs text-slate-400 mb-1">الأنشطة والشركاء الناجحون</p>
-                  <p className="text-sm font-black text-amber-400">{selectedHub.clients}</p>
-                </div>
-                <div className="bg-slate-900/90 p-3.5 rounded-xl border border-slate-800">
-                  <p className="text-xs text-slate-400 mb-1">المنطقة الجغرافية</p>
-                  <p className="text-sm font-black text-cyan-300">{selectedHub.country}</p>
-                </div>
-              </div>
-
-              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mb-6">
-                {selectedHub.details}
-              </p>
-
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800/80">
-                <a
-                  href={buildWhatsAppLink(`مرحباً، أود الاستفسار عن خدمات النجاح والتسويق لفرع (${selectedHub.name} - ${selectedHub.country})`)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-xs sm:text-sm px-6 py-3 rounded-xl shadow-lg transition-all"
-                >
-                  <span>تواصل مباشر مع فرع {selectedHub.name}</span>
-                  <ArrowLeft className="w-4 h-4" />
-                </a>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
       </div>
     </section>
   );

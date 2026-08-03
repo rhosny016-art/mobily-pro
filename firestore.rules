@@ -31,5 +31,12 @@ service cloud.firestore {
       allow read: if true;
       allow update, delete: if false;
     }
+
+    // WhatsApp Clicks
+    match /whatsapp_clicks/{clickId} {
+      allow create: if true;
+      allow read: if true;
+      allow update, delete: if false;
+    }
   }
 }

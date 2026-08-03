@@ -120,7 +120,7 @@ export default function Logo({ size = 36, animated = true, light = false }: Logo
             className={`text-xl sm:text-2xl md:text-3xl font-black tracking-tight leading-none ${
               light ? "text-white" : "text-[#0F2942] group-hover:text-blue-600 transition-colors"
             }`}
-            style={{ fontFamily: '"Cairo", sans-serif' }}
+            style={{ fontFamily: '"Cairo", "Montserrat", sans-serif' }}
           >
             دلّني
           </span>

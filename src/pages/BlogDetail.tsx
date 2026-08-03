@@ -1,7 +1,6 @@
 import { Link, Navigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Calendar, User } from "lucide-react";
-import PageHero from "@/components/PageHero";
+import { ArrowRight, Calendar, User } from "lucide-react";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import LazyImage from "@/components/LazyImage";
 import { BLOG_POSTS } from "@/lib/siteData";
@@ -20,14 +19,14 @@ function MarkdownContent({ content }: { content: string }) {
         const trimmed = block.trim();
         if (trimmed.startsWith("### ")) {
           return (
-            <h3 key={i} className="text-xl font-extrabold mt-8 text-slate-900">
+            <h3 key={i} className="text-xl font-extrabold mt-8">
               {trimmed.replace(/^###\s*/, "")}
             </h3>
           );
         }
         if (trimmed.startsWith("## ")) {
           return (
-            <h2 key={i} className="text-2xl font-extrabold mt-10 pb-2 border-b border-slate-100 text-slate-900">
+            <h2 key={i} className="text-2xl font-extrabold mt-10 pb-2 border-b border-border">
               {trimmed.replace(/^##\s*/, "")}
             </h2>
           );
@@ -37,8 +36,8 @@ function MarkdownContent({ content }: { content: string }) {
           return (
             <ul key={i} className="space-y-2.5 pr-2">
               {items.map((item, j) => (
-                <li key={j} className="flex items-start gap-3 text-slate-600 leading-relaxed" dir="rtl">
-                  <span className="w-2 h-2 rounded-full bg-blue-500 mt-2 shrink-0" />
+                <li key={j} className="flex items-start gap-3 text-foreground/85 leading-relaxed">
+                  <span className="w-2 h-2 rounded-full gradient-primary mt-2.5 shrink-0" />
                   {item}
                 </li>
               ))}
@@ -46,7 +45,7 @@ function MarkdownContent({ content }: { content: string }) {
           );
         }
         return (
-          <p key={i} className="text-slate-600 leading-loose">
+          <p key={i} className="text-foreground/80 leading-loose">
             {trimmed}
           </p>
         );
@@ -63,33 +62,46 @@ export default function BlogDetail() {
 
   return (
     <>
-      <PageHero
-        eyebrow="المدونة"
-        title={post.title}
-        subtitle={`${post.author} — ${formatDate(post.published_date)}`}
-      />
+      <section className="relative gradient-hero pt-28 pb-14 md:pt-36 md:pb-20 overflow-hidden">
+        <div className="absolute top-0 left-1/4 w-80 h-80 rounded-full bg-primary/30 blur-3xl" aria-hidden="true" />
+        <div className="relative max-w-3xl mx-auto px-4">
+          <Link to="/blog" className="inline-flex items-center gap-2 text-white/70 hover:text-white text-sm font-semibold mb-6 transition">
+            <ArrowRight className="w-4 h-4" aria-hidden="true" />
+            العودة للمدونة
+          </Link>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+            <span className="inline-block glass-card text-white text-xs font-bold px-3 py-1.5 rounded-full mb-4">{post.category}</span>
+            <h1 className="text-3xl md:text-4xl font-black text-white leading-tight">{post.title}</h1>
+            <div className="flex items-center gap-5 mt-5 text-sm text-white/60">
+              <span className="flex items-center gap-2">
+                <User className="w-4 h-4" aria-hidden="true" />
+                {post.author}
+              </span>
+              <span className="flex items-center gap-2">
+                <Calendar className="w-4 h-4" aria-hidden="true" />
+                {formatDate(post.published_date)}
+              </span>
+            </div>
+          </motion.div>
+        </div>
+      </section>
 
-      <section className="relative py-12 md:py-16 bg-white">
+      <section className="py-12 md:py-16 bg-white">
         <div className="max-w-3xl mx-auto px-4">
           <LazyImage
             src={post.cover}
             alt={post.title}
-            wrapperClassName="w-full h-48 sm:h-72 rounded-[24px] mb-10 shadow-lg shadow-slate-200/50 overflow-hidden bg-slate-100"
+            wrapperClassName="w-full h-48 sm:h-72 rounded-[24px] mb-10 shadow-lg overflow-hidden bg-slate-100"
             className="w-full h-full object-cover"
           />
           <MarkdownContent content={post.content} />
 
           {/* CTA */}
-          <div className="mt-14 relative rounded-[24px] overflow-hidden">
-            {/* Deep-cobalt CTA band matching the brand hero */}
-            <div className="absolute inset-0 bg-gradient-to-br from-[#0066CC] to-[#1E40AF]" aria-hidden="true" />
-            <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(#fff 1px, transparent 1px)", backgroundSize: "24px 24px" }} aria-hidden="true" />
-            <div className="relative rounded-[24px] p-6 sm:p-9 text-center text-white">
-              <h2 className="text-2xl font-extrabold">هل أعجبك المقال؟</h2>
-              <p className="mt-3 text-white/70">دعنا نطبق هذه الأفكار على نشاطك — استشارتك الأولى مجانية.</p>
-              <div className="mt-6 flex justify-center">
-                <WhatsAppButton size="md">احصل على استشارة مجانية</WhatsAppButton>
-              </div>
+          <div className="mt-14 gradient-hero rounded-[24px] p-6 sm:p-9 text-center">
+            <h2 className="text-2xl font-extrabold text-white">هل أعجبك المقال؟</h2>
+            <p className="mt-3 text-white/70">دعنا نطبق هذه الأفكار على نشاطك — استشارتك الأولى مجانية.</p>
+            <div className="mt-6">
+              <WhatsAppButton size="md">احصل على استشارة مجانية</WhatsAppButton>
             </div>
           </div>
         </div>

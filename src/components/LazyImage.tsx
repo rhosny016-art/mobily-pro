@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface LazyImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
@@ -8,11 +9,6 @@ interface LazyImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   fallbackSrc?: string;
 }
 
-/**
- * Lazy image with IntersectionObserver-based deferred loading and a pure-CSS
- * shimmer skeleton (no JS frames). Falls back to immediate loading when
- * IntersectionObserver is unavailable (SSR / very old browsers).
- */
 export default function LazyImage({
   src,
   alt,
@@ -30,26 +26,21 @@ export default function LazyImage({
   const currentSrc = hasError && fallbackSrc ? fallbackSrc : src;
 
   useEffect(() => {
-    // If IntersectionObserver is not supported, load immediately.
+    // If IntersectionObserver is not supported, load immediately
     if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
       setIsInView(true);
       return;
     }
 
-    let observer: IntersectionObserver | null = new IntersectionObserver(
+    const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsInView(true);
-          observer?.disconnect();
-          observer = null;
+          observer.disconnect();
         }
       },
       {
-        // Preload 200px before coming into viewport for smooth scrolling.
-        rootMargin: "200px",
-        // Only fire once the image is meaningfully on screen — avoids loading
-        // far offscreen images during a fast scroll-through.
-        threshold: 0,
+        rootMargin: "200px", // Preload 200px before coming into viewport for smooth scrolling
       }
     );
 
@@ -58,22 +49,32 @@ export default function LazyImage({
     }
 
     return () => {
-      observer?.disconnect();
-      observer = null;
+      observer.disconnect();
     };
   }, []);
 
-  const showSkeleton = isInView && !isLoaded && !hasError;
-
   return (
     <div className={wrapperClassName} ref={imgRef}>
-      {/* Skeleton Shimmer Placeholder — pure CSS, no JS animation frames. */}
-      {showSkeleton && (
-        <div
-          className="absolute inset-0 z-10 dalni-skeleton transition-opacity duration-500"
-          aria-hidden="true"
-        />
-      )}
+      {/* Skeleton Shimmer Placeholder */}
+      <AnimatePresence>
+        {!isLoaded && !hasError && (
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-slate-100 via-slate-200 to-slate-100 z-10"
+            animate={{
+              backgroundPosition: ["200% 0", "-200% 0"],
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+            style={{
+              backgroundSize: "200% 100%",
+            }}
+            exit={{ opacity: 0 }}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Actual Image */}
       {isInView && (
@@ -98,3 +99,4 @@ export default function LazyImage({
     </div>
   );
 }
+
