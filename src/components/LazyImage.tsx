@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface LazyImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
@@ -13,7 +13,7 @@ export default function LazyImage({
   src,
   alt,
   className = "w-full h-full object-cover",
-  wrapperClassName = "relative overflow-hidden w-full h-full rounded-2xl bg-slate-100",
+  wrapperClassName = "relative overflow-hidden w-full h-full rounded-2xl bg-slate-900",
   fallbackSrc,
   onError,
   ...props
@@ -26,7 +26,6 @@ export default function LazyImage({
   const currentSrc = hasError && fallbackSrc ? fallbackSrc : src;
 
   useEffect(() => {
-    // If IntersectionObserver is not supported, load immediately
     if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
       setIsInView(true);
       return;
@@ -39,44 +38,30 @@ export default function LazyImage({
           observer.disconnect();
         }
       },
-      {
-        rootMargin: "200px", // Preload 200px before coming into viewport for smooth scrolling
-      }
+      { rootMargin: "200px" }
     );
 
     if (imgRef.current) {
       observer.observe(imgRef.current);
     }
 
-    return () => {
-      observer.disconnect();
-    };
+    return () => observer.disconnect();
   }, []);
 
   return (
     <div className={wrapperClassName} ref={imgRef}>
-      {/* Skeleton Shimmer Placeholder */}
+      {/* Premium dark shimmer skeleton */}
       <AnimatePresence>
         {!isLoaded && !hasError && (
           <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-slate-100 via-slate-200 to-slate-100 z-10"
-            animate={{
-              backgroundPosition: ["200% 0", "-200% 0"],
-            }}
-            transition={{
-              duration: 1.5,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-            style={{
-              backgroundSize: "200% 100%",
-            }}
-            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-10 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 animate-shimmer"
+            style={{ backgroundSize: "200% 100%" }}
+            exit={{ opacity: 0, transition: { duration: 0.4 } }}
+            aria-hidden="true"
           />
         )}
       </AnimatePresence>
 
-      {/* Actual Image */}
       {isInView && (
         <img
           src={currentSrc}
@@ -87,7 +72,7 @@ export default function LazyImage({
             setIsLoaded(true);
             if (onError) onError(e);
           }}
-          className={`${className} transition-opacity duration-500 ${
+          className={`${className} transition-opacity duration-700 ${
             isLoaded ? "opacity-100" : "opacity-0"
           }`}
           loading="lazy"
@@ -99,4 +84,3 @@ export default function LazyImage({
     </div>
   );
 }
-
