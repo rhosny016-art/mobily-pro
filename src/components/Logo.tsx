@@ -18,11 +18,23 @@ export default function Logo({ size = 36, animated = true, light = false }: Logo
     >
       {/* 3D Map Pin Graphic */}
       <div className="relative flex items-center justify-center shrink-0">
-        <svg width={size} height={size * 1.12} viewBox="0 0 54 60" fill="none" aria-hidden="true" className="drop-shadow-xs transition-transform duration-300 group-hover:scale-105">
+        {/* Soft ambient glow behind the pin */}
+        <div
+          className="absolute inset-0 -m-2 rounded-full bg-blue-500/25 blur-md opacity-70 group-hover:opacity-100 transition-opacity duration-500"
+          aria-hidden="true"
+        />
+        <svg
+          width={size}
+          height={size * 1.12}
+          viewBox="0 0 54 60"
+          fill="none"
+          aria-hidden="true"
+          className="drop-shadow-[0_6px_14px_rgba(37,99,235,0.45)] transition-transform duration-300 group-hover:scale-105 group-hover:-translate-y-0.5"
+        >
           <defs>
             <linearGradient id="pinBodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#1E3A8A" />
-              <stop offset="45%" stopColor="#1D4ED8" />
+              <stop offset="0%" stopColor="#2563EB" />
+              <stop offset="50%" stopColor="#1D4ED8" />
               <stop offset="100%" stopColor="#0F172A" />
             </linearGradient>
             <linearGradient id="arrowGoldGrad" x1="0%" y1="100%" x2="100%" y2="0%">
@@ -31,7 +43,7 @@ export default function Logo({ size = 36, animated = true, light = false }: Logo
               <stop offset="100%" stopColor="#FCD34D" />
             </linearGradient>
             <filter id="shadowPin" x="-10%" y="-10%" width="120%" height="130%">
-              <feDropShadow dx="0" dy="4" stdDeviation="3" floodOpacity="0.25" floodColor="#0F172A" />
+              <feDropShadow dx="0" dy="4" stdDeviation="3" floodOpacity="0.35" floodColor="#0F172A" />
             </filter>
           </defs>
 
@@ -43,73 +55,24 @@ export default function Logo({ size = 36, animated = true, light = false }: Logo
           />
 
           {/* Globe Latitude & Longitude Mesh Grid */}
-          <path
-            d="M 12 18 C 20 27, 34 27, 42 18"
-            stroke="rgba(255,255,255,0.22)"
-            strokeWidth="1.2"
-            fill="none"
-          />
-          <path
-            d="M 8 27 C 18 38, 36 38, 46 27"
-            stroke="rgba(255,255,255,0.22)"
-            strokeWidth="1.2"
-            fill="none"
-          />
-          <path
-            d="M 15 37 C 21 44, 33 44, 39 37"
-            stroke="rgba(255,255,255,0.18)"
-            strokeWidth="1"
-            fill="none"
-          />
-          <path
-            d="M 27 4 C 18 20, 18 38, 27 58"
-            stroke="rgba(255,255,255,0.22)"
-            strokeWidth="1.2"
-            fill="none"
-          />
-          <path
-            d="M 27 4 C 36 20, 36 38, 27 58"
-            stroke="rgba(255,255,255,0.22)"
-            strokeWidth="1.2"
-            fill="none"
-          />
+          <path d="M 12 18 C 20 27, 34 27, 42 18" stroke="rgba(255,255,255,0.22)" strokeWidth="1.2" fill="none" />
+          <path d="M 8 27 C 18 38, 36 38, 46 27" stroke="rgba(255,255,255,0.22)" strokeWidth="1.2" fill="none" />
+          <path d="M 15 37 C 21 44, 33 44, 39 37" stroke="rgba(255,255,255,0.18)" strokeWidth="1" fill="none" />
+          <path d="M 27 4 C 18 20, 18 38, 27 58" stroke="rgba(255,255,255,0.22)" strokeWidth="1.2" fill="none" />
+          <path d="M 27 4 C 36 20, 36 38, 27 58" stroke="rgba(255,255,255,0.22)" strokeWidth="1.2" fill="none" />
 
           {/* Orange Top-Left Shoulder Dot */}
           <circle cx="10" cy="15" r="4.5" fill="#F97316" />
 
           {/* Diagonal Growth Arrow piercing through pin */}
-          <motion.g
-            variants={{
-              hover: { x: 2, y: -2, transition: { duration: 0.25 } }
-            }}
-          >
-            {/* Main Arrow Line */}
-            <path
-              d="M 14 44 L 45 11"
-              stroke="url(#arrowGoldGrad)"
-              strokeWidth="4.5"
-              strokeLinecap="round"
-            />
-            {/* Secondary Parallel Trail Line */}
-            <path
-              d="M 11 47 L 38 18"
-              stroke="url(#arrowGoldGrad)"
-              strokeWidth="2.2"
-              strokeLinecap="round"
-              opacity="0.85"
-            />
-            {/* Arrowhead Head */}
-            <path
-              d="M 33 11 L 46 10 L 45 23 L 40 17 Z"
-              fill="url(#arrowGoldGrad)"
-            />
+          <motion.g variants={{ hover: { x: 2, y: -2, transition: { duration: 0.25 } } }}>
+            <path d="M 14 44 L 45 11" stroke="url(#arrowGoldGrad)" strokeWidth="4.5" strokeLinecap="round" />
+            <path d="M 11 47 L 38 18" stroke="url(#arrowGoldGrad)" strokeWidth="2.2" strokeLinecap="round" opacity="0.85" />
+            <path d="M 33 11 L 46 10 L 45 23 L 40 17 Z" fill="url(#arrowGoldGrad)" />
           </motion.g>
 
           {/* White Navigation Compass Arrow at bottom tip */}
-          <path
-            d="M 27 47 L 23 53 L 27 51 L 31 53 Z"
-            fill="#FFFFFF"
-          />
+          <path d="M 27 47 L 23 53 L 27 51 L 31 53 Z" fill="#FFFFFF" />
         </svg>
       </div>
 
@@ -129,4 +92,3 @@ export default function Logo({ size = 36, animated = true, light = false }: Logo
     </motion.div>
   );
 }
-
