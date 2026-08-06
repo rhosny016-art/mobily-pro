@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Quote, ChevronDown, ArrowLeft, Sparkles } from "lucide-react";
+import { Quote, ChevronDown, ArrowLeft, Sparkles, MessageCircle } from "lucide-react";
 import SectionHeading from "@/components/SectionHeading";
 import Reveal from "@/components/Reveal";
 import WhatsAppButton from "@/components/WhatsAppButton";
@@ -28,6 +28,10 @@ export function TestimonialsSection() {
           {TESTIMONIALS.map((t, i) => (
             <Reveal key={t.name} delay={i * 0.1}>
               <figure className="group relative h-full rounded-[26px] border border-line bg-white p-7 shadow-card hover:shadow-card-lg hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden">
+                <span
+                  className="absolute top-0 right-6 left-6 h-[3px] rounded-b-full bg-gradient-to-l from-brass-400 via-brass-500 to-brass-600 opacity-0 group-hover:opacity-100 scale-x-50 group-hover:scale-x-100 origin-right transition-all duration-500"
+                  aria-hidden="true"
+                />
                 <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-brass-400/10 blur-2xl group-hover:bg-brass-400/20 transition-colors duration-500 pointer-events-none" />
                 <Quote className="absolute top-6 left-6 w-11 h-11 text-brass-500/15 group-hover:text-brass-500/25 transition-colors" aria-hidden="true" />
 
@@ -45,12 +49,18 @@ export function TestimonialsSection() {
                 </div>
 
                 <figcaption className="flex items-center gap-3.5 mt-7 pt-6 border-t border-line">
-                  <LazyImage
-                    src={t.avatar}
-                    alt={t.name}
-                    wrapperClassName="w-12 h-12 rounded-full overflow-hidden ring-2 ring-brass-400/30 shrink-0 bg-slate-100"
-                    className="w-full h-full object-cover"
-                  />
+                  <div className="relative shrink-0">
+                    <span
+                      className="absolute -inset-0.5 rounded-full bg-gradient-to-br from-brass-400 to-brass-600 opacity-70"
+                      aria-hidden="true"
+                    />
+                    <LazyImage
+                      src={t.avatar}
+                      alt={t.name}
+                      wrapperClassName="relative w-12 h-12 rounded-full overflow-hidden bg-slate-100"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                   <div>
                     <p className="font-extrabold text-sm text-night-900 flex items-center gap-1.5">
                       {t.name}
@@ -159,6 +169,18 @@ export function FAQSection() {
             );
           })}
         </div>
+
+        <p className="mt-8 text-center text-sm text-muted-foreground font-medium">
+          عندك سؤال آخر؟{" "}
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new CustomEvent("dalni:open-chat"))}
+            className="inline-flex items-center gap-1.5 font-extrabold text-brass-600 hover:text-brass-700 transition-colors"
+          >
+            <MessageCircle className="w-4 h-4" aria-hidden="true" />
+            اسأل دَلّوب الذكي مباشرة
+          </button>
+        </p>
       </div>
     </section>
   );
@@ -169,14 +191,15 @@ export function FAQSection() {
 export function CTASection() {
   return (
     <section className="relative py-20 md:py-32 overflow-hidden bg-night-950">
+      <div className="absolute inset-0 bg-aurora" aria-hidden="true" />
       <div className="absolute inset-0 bg-night-grid opacity-40" aria-hidden="true" />
-      {/* Golden ring */}
+      {/* Golden rings */}
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[680px] h-[680px] rounded-full border border-brass-500/15"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[680px] h-[680px] rounded-full border border-brass-500/15 animate-spin-slower"
         aria-hidden="true"
       />
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] h-[480px] rounded-full border border-brass-500/10"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] h-[480px] rounded-full border border-brass-500/10 animate-spin-slow"
         aria-hidden="true"
       />
       <div
@@ -219,6 +242,23 @@ export function CTASection() {
               تصفح الخدمات المتكاملة
               <ArrowLeft className="w-5 h-5" aria-hidden="true" />
             </Link>
+          </div>
+        </Reveal>
+
+        <Reveal delay={0.4}>
+          <div className="mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs font-bold text-slate-400">
+            <span className="inline-flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-mint-400" />
+              استشارة مجانية 100%
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-brass-400" />
+              رد خلال ساعتين عمل
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-mint-400" />
+              تقارير شفافة أسبوعياً
+            </span>
           </div>
         </Reveal>
       </div>

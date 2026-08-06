@@ -1,75 +1,11 @@
 import { useEffect, useState } from "react";
-import { Check, Star, Sparkles, ArrowLeft } from "lucide-react";
+import { Check, Star } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import Reveal from "@/components/Reveal";
 import ServiceCard from "@/components/ServiceCard";
 import WhatsAppButton from "@/components/WhatsAppButton";
-import { buildWhatsAppLink } from "@/lib/whatsapp";
 import { getServices } from "@/lib/store";
-import { SERVICES as DEFAULT_SERVICES, type Service } from "@/lib/siteData";
-
-function PricingTable({ service }: { service: Service }) {
-  const packages = service.pricing || [];
-  return (
-    <div className="space-y-3.5">
-      {packages.map((pkg, i) => {
-        const isMiddle = i === 1;
-        return (
-          <div
-            key={pkg.name}
-            className={`relative rounded-2xl border p-5 transition-all duration-300 hover:-translate-y-0.5 ${
-              isMiddle
-                ? "border-brass-500/50 bg-gradient-to-br from-brass-500/10 to-transparent shadow-card-lg"
-                : "border-line bg-white hover:border-brass-500/30"
-            }`}
-          >
-            {isMiddle && (
-              <span className="absolute -top-2.5 right-5 inline-flex items-center gap-1 text-[10px] font-extrabold bg-gradient-to-l from-brass-600 to-brass-400 text-night-950 rounded-full px-3 py-1 shadow-glow-gold">
-                <Sparkles className="w-3 h-3" aria-hidden="true" />
-                الأكثر طلباً
-              </span>
-            )}
-            <div className="flex flex-wrap items-end justify-between gap-3 mb-3.5">
-              <div>
-                <h4 className="font-extrabold text-night-900">{pkg.name}</h4>
-                <p className="mt-1 flex items-baseline gap-1.5">
-                  <span className="font-display font-bold text-2xl text-night-900 leading-none">{pkg.price}</span>
-                  <span className="text-xs font-bold text-muted-foreground">ج.م / شهرياً</span>
-                </p>
-              </div>
-              <a
-                href={buildWhatsAppLink(`مرحباً، أريد حجز باقة "${pkg.name}" من خدمة: ${service.title} 🙏`)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`inline-flex items-center gap-1.5 text-xs font-extrabold rounded-full px-4 py-2 transition-all active:scale-95 ${
-                  isMiddle
-                    ? "bg-gradient-to-l from-brass-600 to-brass-500 text-night-950 hover:brightness-110"
-                    : "bg-night-900 text-white hover:bg-night-700"
-                }`}
-              >
-                احجز الآن
-                <ArrowLeft className="w-3 h-3" aria-hidden="true" />
-              </a>
-            </div>
-            <ul className="space-y-1.5">
-              {pkg.features.map((f) => (
-                <li key={f} className="flex items-start gap-2 text-[13px] font-semibold text-night-800/80">
-                  <span className="w-4.5 h-4.5 rounded-full bg-mint-500/12 text-mint-600 flex items-center justify-center shrink-0 mt-px">
-                    <Check className="w-2.5 h-2.5" strokeWidth={3} aria-hidden="true" />
-                  </span>
-                  {f}
-                </li>
-              ))}
-            </ul>
-          </div>
-        );
-      })}
-      <p className="text-[11px] text-muted-foreground font-medium px-1">
-        * أسعار استرشادية قابلة للتخصيص حسب حجم نشاطك — الاستشارة المجانية تُحدد العرض النهائي.
-      </p>
-    </div>
-  );
-}
+import { SERVICES as DEFAULT_SERVICES } from "@/lib/siteData";
 
 export default function Services() {
   const [services, setServices] = useState(DEFAULT_SERVICES.filter((s) => s.visible !== false));
@@ -100,17 +36,16 @@ export default function Services() {
         </div>
       </section>
 
-      {/* Details + pricing */}
+      {/* Details */}
       <section className="py-14 md:py-24 bg-white border-t border-line">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20 md:space-y-28">
           {services.map((s, i) => (
             <div
               key={s.id}
               id={`service-${s.id}`}
-              className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-start scroll-mt-28"
+              className="max-w-4xl mx-auto scroll-mt-28"
             >
-              {/* Content */}
-              <Reveal className={i % 2 === 1 ? "lg:order-2" : ""}>
+              <Reveal>
                 <div className="flex items-center gap-4 mb-6">
                   <span className="font-display text-sm font-bold text-brass-600 bg-brass-500/10 border border-brass-500/25 rounded-xl px-3 py-1.5 shrink-0">
                     {String(i + 1).padStart(2, "0")}
@@ -173,19 +108,6 @@ export default function Services() {
                   <WhatsAppButton serviceTitle={s.title} size="md">
                     اطلب هذه الخدمة عبر واتساب
                   </WhatsAppButton>
-                </div>
-              </Reveal>
-
-              {/* Pricing */}
-              <Reveal delay={0.12} className={i % 2 === 1 ? "lg:order-1" : ""}>
-                <div className="rounded-[26px] border border-line bg-fog/70 p-6 sm:p-8 shadow-card">
-                  <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-lg font-black text-night-900">باقات وأسعار</h3>
-                    <span className="text-[11px] font-bold text-muted-foreground bg-white border border-line rounded-full px-3 py-1">
-                      تبدأ من {s.pricing?.[0]?.price} ج.م
-                    </span>
-                  </div>
-                  <PricingTable service={s} />
                 </div>
               </Reveal>
             </div>

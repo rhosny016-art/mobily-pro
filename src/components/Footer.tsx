@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Clock, Mail, MapPin, Phone } from "lucide-react";
+import { Clock, Mail, MapPin, Phone, ArrowUp, Star } from "lucide-react";
 import Logo from "./Logo";
 import { getSiteSettings } from "@/lib/store";
 import { DEFAULT_SETTINGS } from "@/lib/siteData";
@@ -28,7 +28,6 @@ const LinkedinIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
 const QUICK_LINKS = [
   { to: "/", label: "الرئيسية" },
   { to: "/services", label: "خدماتنا" },
-  { to: "/blog", label: "المدونة" },
   { to: "/about", label: "من نحن" },
 ];
 
@@ -46,6 +45,8 @@ export default function Footer() {
     getSiteSettings().then(setS);
   }, []);
 
+  const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+
   return (
     <footer className="relative bg-night-950 text-slate-300/80 border-t border-white/6 overflow-hidden">
       <div className="absolute inset-0 bg-night-grid opacity-40" aria-hidden="true" />
@@ -56,6 +57,17 @@ export default function Footer() {
         <div>
           <Logo light animated={false} size={38} />
           <p className="mt-5 text-sm leading-relaxed text-slate-400 font-medium max-w-sm">{s.footer_text}</p>
+
+          <div className="flex items-center gap-2 mt-5 text-sm font-bold text-white">
+            <span className="flex text-brass-400" aria-hidden="true">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} className="w-4 h-4 fill-brass-400" />
+              ))}
+            </span>
+            <span className="font-display">4.9</span>
+            <span className="text-slate-400 font-medium text-xs">تقييم عملائنا على Google</span>
+          </div>
+
           <div className="flex gap-3 mt-6">
             {[
               { href: s.social_facebook, Icon: FacebookIcon, label: "فيسبوك" },
@@ -143,12 +155,20 @@ export default function Footer() {
       </div>
 
       <div className="relative border-t border-white/6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <span>© 2026 دلّني — جميع الحقوق محفوظة</span>
           <div className="flex flex-wrap items-center justify-center gap-5">
             <Link to="/about" className="hover:text-brass-300 transition-colors">من نحن</Link>
-            <Link to="/blog" className="hover:text-brass-300 transition-colors">المدونة</Link>
             <Link to="/dashboard/login" className="hover:text-brass-300 transition-colors">لوحة التحكم</Link>
+            <button
+              type="button"
+              onClick={scrollTop}
+              aria-label="العودة إلى الأعلى"
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3.5 py-1.5 font-bold text-slate-300 hover:text-white hover:border-brass-500/40 hover:-translate-y-0.5 transition-all"
+            >
+              العودة للأعلى
+              <ArrowUp className="w-3.5 h-3.5" aria-hidden="true" />
+            </button>
           </div>
         </div>
       </div>

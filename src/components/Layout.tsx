@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-import FloatingWhatsApp from "./FloatingWhatsApp";
+import ChatWidget from "./ChatWidget";
 import { trackVisit } from "@/lib/store";
 
 export default function Layout() {
@@ -25,7 +25,7 @@ export default function Layout() {
         <Outlet />
       </main>
       <Footer />
-      <FloatingWhatsApp />
+      <ChatWidget />
     </div>
   );
 }

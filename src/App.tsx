@@ -1,13 +1,15 @@
 import { useEffect, lazy, Suspense } from "react";
 import { HashRouter, Route, Routes, useLocation } from "react-router-dom";
+import { MotionConfig } from "framer-motion";
 import Layout from "@/components/Layout";
 import LoadingFallback from "@/components/LoadingFallback";
+import ScrollProgress from "@/components/ui/ScrollProgress";
+import CursorGlow from "@/components/ui/CursorGlow";
+import Preloader from "@/components/ui/Preloader";
 
 // Lazy-load client pages
 const Home = lazy(() => import("@/pages/Home"));
 const Services = lazy(() => import("@/pages/Services"));
-const Blog = lazy(() => import("@/pages/Blog"));
-const BlogDetail = lazy(() => import("@/pages/BlogDetail"));
 const About = lazy(() => import("@/pages/About"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 
@@ -29,27 +31,30 @@ function ScrollToTop() {
 
 export default function App() {
   return (
-    <HashRouter>
-      <ScrollToTop />
-      <Suspense fallback={<LoadingFallback />}>
-        <Routes>
-          <Route element={<Layout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/services" element={<Services />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:slug" element={<BlogDetail />} />
-            <Route path="/about" element={<About />} />
-            <Route path="*" element={<NotFound />} />
-          </Route>
-          <Route path="/dashboard/login" element={<DashboardLogin />} />
-          <Route path="/dashboard" element={<DashboardLayout />}>
-            <Route index element={<DashboardStats />} />
-            <Route path="services" element={<DashboardServices />} />
-            <Route path="requests" element={<DashboardRequests />} />
-            <Route path="settings" element={<DashboardSettings />} />
-          </Route>
-        </Routes>
-      </Suspense>
-    </HashRouter>
+    <MotionConfig reducedMotion="user">
+      <HashRouter>
+        <Preloader />
+        <ScrollProgress />
+        <CursorGlow />
+        <ScrollToTop />
+        <Suspense fallback={<LoadingFallback />}>
+          <Routes>
+            <Route element={<Layout />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/services" element={<Services />} />
+              <Route path="/about" element={<About />} />
+              <Route path="*" element={<NotFound />} />
+            </Route>
+            <Route path="/dashboard/login" element={<DashboardLogin />} />
+            <Route path="/dashboard" element={<DashboardLayout />}>
+              <Route index element={<DashboardStats />} />
+              <Route path="services" element={<DashboardServices />} />
+              <Route path="requests" element={<DashboardRequests />} />
+              <Route path="settings" element={<DashboardSettings />} />
+            </Route>
+          </Routes>
+        </Suspense>
+      </HashRouter>
+    </MotionConfig>
   );
 }

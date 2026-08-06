@@ -297,7 +297,11 @@ export default function InteractiveAgencyMap() {
           {/* Bottom stats bar */}
           <div className="px-5 sm:px-7 py-4 border-t border-white/8 bg-night-900/60 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-400">
             <span>
-              تغطية ناجحة: <strong className="font-display text-brass-300 font-bold">14 مدينة</strong> في 11 دولة
+              تغطية ناجحة:{" "}
+              <strong className="font-display text-brass-300 font-bold">
+                {DIGITAL_HUBS.length} مدينة
+              </strong>{" "}
+              في {new Set(DIGITAL_HUBS.map((h) => h.country)).size} دولة
             </span>
             <span className="inline-flex items-center gap-1.5 text-mint-400 font-semibold">
               <span className="w-1.5 h-1.5 rounded-full bg-mint-400 animate-pulse-soft" />
@@ -310,6 +314,8 @@ export default function InteractiveAgencyMap() {
         <AnimatePresence>
           {selectedHub && (
             <motion.div
+              role="status"
+              aria-live="polite"
               initial={{ opacity: 0, y: 24, scale: 0.97 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 24, scale: 0.97 }}

@@ -3,6 +3,7 @@ import Hero from "@/components/home/Hero";
 import {
   PlatformStrip,
   ServicesSection,
+  ResultsShowcaseSection,
   ProcessSection,
   StatsSection,
   WhyChooseUsSection,
@@ -18,6 +19,7 @@ export default function Home() {
       <Hero />
       <PlatformStrip />
       <ServicesSection />
+      <ResultsShowcaseSection />
       <ProcessSection />
       <StatsSection />
       <WhyChooseUsSection />

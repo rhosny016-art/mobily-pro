@@ -2,19 +2,19 @@ import { motion } from "framer-motion";
 import { Check, Sparkles, ArrowLeft } from "lucide-react";
 import { ICON_MAP } from "@/lib/icons";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
+import { EASE_OUT_EXPO } from "@/lib/motion";
 import type { Service } from "@/lib/siteData";
 
 export default function ServiceCard({ service, index = 0 }: { service: Service; index?: number }) {
   const Icon = ICON_MAP[service.icon] || Sparkles;
-  const startingPrice = service.pricing?.[0]?.price;
 
   return (
     <motion.div
       id={`service-card-${service.id}`}
-      initial={{ opacity: 0, y: 32 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 32, filter: "blur(5px)" }}
+      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
       viewport={{ once: true, amount: 0.15 }}
-      transition={{ duration: 0.55, delay: (index % 3) * 0.09, ease: [0.215, 0.61, 0.355, 1] as const }}
+      transition={{ duration: 0.6, delay: (index % 3) * 0.1, ease: EASE_OUT_EXPO }}
       whileHover={{ y: -10 }}
       className="relative group h-full"
     >
@@ -25,11 +25,26 @@ export default function ServiceCard({ service, index = 0 }: { service: Service; 
       />
 
       <div className="relative h-full flex flex-col rounded-[26px] border border-line bg-white p-6 sm:p-7 transition-colors duration-300 group-hover:border-brass-500/40 overflow-hidden">
+        {/* Top gold accent line */}
+        <span
+          className="absolute top-0 right-6 left-6 h-[3px] rounded-b-full bg-gradient-to-l from-brass-400 via-brass-500 to-brass-600 opacity-0 group-hover:opacity-100 scale-x-50 group-hover:scale-x-100 origin-right transition-all duration-500"
+          aria-hidden="true"
+        />
+
         {/* Corner deco */}
         <div
           className="absolute -top-14 -left-14 w-36 h-36 rounded-full bg-gradient-to-br from-brass-400/12 via-brass-500/8 to-transparent blur-2xl transition-transform duration-700 group-hover:scale-[1.6] pointer-events-none"
           aria-hidden="true"
         />
+
+        {/* Index watermark */}
+        <span
+          dir="ltr"
+          className="absolute bottom-3 left-4 font-display text-[40px] font-bold leading-none text-night-900/[0.05] group-hover:text-brass-500/10 transition-colors duration-500 select-none pointer-events-none"
+          aria-hidden="true"
+        >
+          {String(index + 1).padStart(2, "0")}
+        </span>
 
         {service.featured && (
           <span className="absolute top-5 left-5 inline-flex items-center gap-1.5 bg-gradient-to-l from-brass-600 to-brass-400 text-night-950 text-[11px] font-extrabold px-3 py-1.5 rounded-full shadow-glow-gold z-10">
@@ -65,22 +80,12 @@ export default function ServiceCard({ service, index = 0 }: { service: Service; 
         </ul>
 
         {/* Footer */}
-        <div className="mt-auto pt-5 border-t border-line flex items-center justify-between gap-3 z-10">
-          <div>
-            {startingPrice && (
-              <>
-                <p className="text-[11px] text-muted-foreground font-bold">يبدأ من</p>
-                <p className="font-display font-bold text-lg text-night-900 leading-tight">
-                  {startingPrice} <span className="text-xs font-semibold text-muted-foreground">ج.م</span>
-                </p>
-              </>
-            )}
-          </div>
+        <div className="mt-auto pt-5 border-t border-line z-10">
           <a
             href={buildWhatsAppLink(`مرحباً، أريد الاستفسار عن خدمة: ${service.title} 🙏`)}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-full bg-night-900 text-white text-[13px] font-extrabold px-5 py-2.5 group-hover:bg-gradient-to-l group-hover:from-brass-600 group-hover:to-brass-500 group-hover:text-night-950 transition-all duration-300 group-hover:shadow-glow-gold active:scale-95"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-night-900 text-white text-[13px] font-extrabold px-5 py-2.5 group-hover:bg-gradient-to-l group-hover:from-brass-600 group-hover:to-brass-500 group-hover:text-night-950 transition-all duration-300 group-hover:shadow-glow-gold active:scale-95"
           >
             اطلب الخدمة
             <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" aria-hidden="true" />
