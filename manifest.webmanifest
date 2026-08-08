@@ -1,0 +1,27 @@
+{
+    "name": "شركة العزل المتقدم",
+    "short_name": "العزل المتقدم",
+    "description": "عزل خزانات المياه وعزل الأسطح الحراري والمائي في جميع مناطق المملكة العربية السعودية بضمان معتمد.",
+    "lang": "ar",
+    "dir": "rtl",
+    "start_url": ".",
+    "scope": "/",
+    "id": "/",
+    "display": "standalone",
+    "background_color": "#0a1628",
+    "theme_color": "#0a1628",
+    "icons": [
+        {
+            "src": "apple-touch-icon.png",
+            "sizes": "180x180",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "favicon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any"
+        }
+    ]
+}
